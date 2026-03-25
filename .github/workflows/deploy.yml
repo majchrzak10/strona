@@ -1,12 +1,14 @@
 # =============================================================================
-# GitHub → CyberFolks: wgrywanie folderu out/ przez SFTP (SSH), nie FTP.
-# Wiele hostingów (w tym CyberFolks) odrzuca FTP z IP GitHuba — SFTP działa stabilniej.
+# CyberFolks: build → wgrywanie out/
 #
-# Sekrety (te same nazwy co wcześniej — możesz użyć loginu/hasła z panelu „FTP/SFTP”):
-#   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-# Opcja: zmienna FTP_SERVER_DIR (np. /domains/domena.pl/public_html/)
-# Opcja: zmienna SFTP_PORT (domyślnie 22)
-# Opcja: sekrety ASARI_* — pełny build ofert w CI
+# Domyślnie: SFTP (SSH). Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+#
+# Port SFTP: zmienna SFTP_PORT (np. 2222) albo przy „Run workflow” pole „Port SFTP”.
+#            Wiele hostingów blokuje 22 z zewnątrz — w panelu sprawdź inny port SSH.
+#
+# Gdy SFTP w ogóle niedostępny: zmienna DEPLOY_METHOD = lftp (FTP/FTPS na porcie 21)
+# Opcja: FTP_PROTOCOL (ftps / ftps-legacy) przy lftp
+# Katalog: FTP_SERVER_DIR
 # =============================================================================
 
 name: Deploy — CyberFolks (SFTP)
@@ -17,6 +19,11 @@ on:
       - main
       - master
   workflow_dispatch:
+    inputs:
+      sftp_port:
+        description: "Port SFTP/SSH (np. 22, 2222). Puste = zmienna SFTP_PORT lub 22."
+        required: false
+        type: string
 
 concurrency:
   group: deploy-cyberfolks
@@ -47,15 +54,29 @@ jobs:
           ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
         run: npm run build
 
-      # SFTP (hasło) — to samo konto co w FileZilli w trybie SFTP (port 22)
       - name: Wgranie na CyberFolks (SFTP)
+        if: ${{ vars.DEPLOY_METHOD != 'lftp' }}
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           username: ${{ secrets.FTP_USERNAME }}
           server: ${{ secrets.FTP_SERVER }}
-          port: ${{ vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 22 }}
+          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 22) }}
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: "./out/*"
           remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
           sftp_only: true
           sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
+
+      - name: Wgranie na CyberFolks (FTP/FTPS — gdy SFTP niemożliwy)
+        if: ${{ vars.DEPLOY_METHOD == 'lftp' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/
+          server-dir: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          port: ${{ vars.FTP_PORT != '' && fromJSON(vars.FTP_PORT) || 21 }}
+          timeout: 120000
+          security: loose

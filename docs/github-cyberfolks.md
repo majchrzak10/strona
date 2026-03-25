@@ -33,9 +33,19 @@ Opcja: **`ASARI_DATA_DIR`**, **`ASARI_PHOTOS_DIR`** — jeśli chcesz pełny bui
 | Nazwa | Przykład |
 |-------|----------|
 | `FTP_SERVER_DIR` | `/domains/moja-domena.pl/public_html/` |
-| `SFTP_PORT` | `22` (pomiń, jeśli domyślny 22) |
+| `SFTP_PORT` | np. `2222` — **jeśli port 22 nie działa** (patrz niżej) |
 
 Gdy `FTP_SERVER_DIR` jest pusta, używane jest `/public_html/`.
+
+### Port 22 nie działa / „connection refused”
+
+1. W **panelu CyberFolks** (lub w mailu od hostingu) sprawdź, czy podany jest **inny port SSH/SFTP** niż 22 (czasem **2222**, **22022** itd.). Ustaw wtedy zmienną **`SFTP_PORT`** na tę wartość (same cyfry).
+
+2. Albo **Actions → Deploy — CyberFolks (SFTP) → Run workflow** i w polu **„Port SFTP”** wpisz ten port (np. `2222`).
+
+3. Na **współdzielonym hostingu** często **SSH/SFTP jest wyłączone** — działa tylko **FTP** (port 21). Wtedy ustaw zmienną **`DEPLOY_METHOD`** = `lftp` (workflow wgra pliki przez **FTP/FTPS** zamiast SFTP). Opcjonalnie **`FTP_PROTOCOL`**: `ftps` lub `ftps-legacy`, **`FTP_PORT`**: `21` (domyślnie).
+
+4. Jeśli i FTP z GitHuba się zrywa (`FIN packet`), zostało **ręczne wgranie** `out/` (FileZilla), **inny CI** z serwerem w UE albo **self-hosted runner** GitHub (np. u Ciebie w domu).
 
 ## 4. Pierwszy deploy
 
