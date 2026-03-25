@@ -9,7 +9,7 @@
 #
 # Gdy SFTP w ogóle niedostępny: zmienna DEPLOY_METHOD = lftp (FTP/FTPS na porcie 21)
 # Opcja: FTP_PROTOCOL (ftps / ftps-legacy) przy lftp
-# Katalog: FTP_SERVER_DIR
+# Katalog zdalny: FTP_SERVER_DIR — ustaw jak w FileZilli (często domains/domena.pl/public_html/ albo public_html/)
 # =============================================================================
 
 name: Deploy — CyberFolks (SFTP)
@@ -63,8 +63,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local_path: "./out/*"
-          remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          # Cały katalog out/ (bez /*) — inaczej sftp zgłasza „destination is not a directory”
+          local_path: "./out"
+          # W SFTP chroot często nie ma /public_html u roota — ustaw FTP_SERVER_DIR jak ścieżka „Zdalna witryna” w FileZilli
+          remote_path: ${{ vars.FTP_SERVER_DIR || 'public_html' }}
           sftp_only: true
           sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
 
@@ -77,8 +79,8 @@ jobs:
           port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           ssh_passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          local_path: "./out/*"
-          remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          local_path: "./out"
+          remote_path: ${{ vars.FTP_SERVER_DIR || 'public_html' }}
           sftp_only: true
           sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
 

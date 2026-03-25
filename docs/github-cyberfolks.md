@@ -75,7 +75,7 @@ Opcja: **`ASARI_DATA_DIR`**, **`ASARI_PHOTOS_DIR`** — pełny build ofert w CI.
 
 | Nazwa | Kiedy |
 |-------|--------|
-| `FTP_SERVER_DIR` | Ścieżka na serwerze, jeśli nie `/public_html/` |
+| `FTP_SERVER_DIR` | **Dokładnie** jak w FileZilli (*Zdalna witryna*), np. `domains/domena.pl/public_html` lub `public_html` — przy SFTP często **nie** działa sztywne `/public_html/` od roota. |
 | `SFTP_PORT` | Gdy nie CyberFolks — np. `22` na innym hostingu |
 | `DEPLOY_METHOD` = `lftp` | Tylko gdy SFTP nie działa — wtedy FTP/FTPS (port 21) |
 | `SFTP_USE_KEY_AUTH` = `true` | Zamiast hasła: deploy **kluczem SSH** — wtedy sekret `SSH_PRIVATE_KEY` (i opcjonalnie `SSH_KEY_PASSPHRASE`) |
@@ -93,6 +93,10 @@ Firewall / blokada regionów — wtedy **ręczne wgranie** `out/`, **self-hosted
 1. Uzupełnij sekrety i ewentualnie `FTP_SERVER_DIR`.
 2. `push` na `main` lub **Run workflow**.
 3. Sprawdź log „Wgranie na CyberFolks (SFTP)”.
+
+## 5a. „destination is not a directory” / błąd `put` przy deployu
+
+Workflow wgrywa **cały folder** `out/` (nie `out/*`). Zdalna ścieżka musi wskazywać **istniejący katalog** strony — ustaw **`FTP_SERVER_DIR`** tak jak pełna ścieżka w FileZilli (np. `domains/twoja-domena.pl/public_html`), bez zgadywania.
 
 ## 5. „Permission denied, please try again” (SFTP)
 
