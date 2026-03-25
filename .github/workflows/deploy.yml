@@ -1,12 +1,15 @@
 # =============================================================================
-# GitHub → CyberFolks (FTP). Instrukcja: docs/github-cyberfolks.md
-# Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# GitHub → CyberFolks: wgrywanie folderu out/ przez SFTP (SSH), nie FTP.
+# Wiele hostingów (w tym CyberFolks) odrzuca FTP z IP GitHuba — SFTP działa stabilniej.
+#
+# Sekrety (te same nazwy co wcześniej — możesz użyć loginu/hasła z panelu „FTP/SFTP”):
+#   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
 # Opcja: zmienna FTP_SERVER_DIR (np. /domains/domena.pl/public_html/)
-# Opcja: FTP_PROTOCOL = ftps lub ftps-legacy (gdy zwykły ftp zrywa połączenie — CyberFolks)
-# Opcja: sekrety ASARI_* — tylko jeśli kopiujesz XML na runner przed buildem
+# Opcja: zmienna SFTP_PORT (domyślnie 22)
+# Opcja: sekrety ASARI_* — pełny build ofert w CI
 # =============================================================================
 
-name: Deploy — CyberFolks (FTP)
+name: Deploy — CyberFolks (SFTP)
 
 on:
   push:
@@ -44,16 +47,15 @@ jobs:
           ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
         run: npm run build
 
-      - name: Wgranie na CyberFolks (FTP)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # SFTP (hasło) — to samo konto co w FileZilli w trybie SFTP (port 22)
+      - name: Wgranie na CyberFolks (SFTP)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
-          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER }}
+          port: ${{ vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 22 }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./out/
-          server-dir: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
-          protocol: ${{ vars.FTP_PROTOCOL || 'ftp' }}
-          port: ${{ vars.FTP_PORT != '' && fromJSON(vars.FTP_PORT) || 21 }}
-          timeout: 120000
-          security: loose
-          log-level: standard
+          local_path: "./out/*"
+          remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          sftp_only: true
+          sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
