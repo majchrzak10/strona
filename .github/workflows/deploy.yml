@@ -1,35 +1,53 @@
-name: 🚀 Deploy to Cyberfolks
+# =============================================================================
+# GitHub → CyberFolks (FTP). Instrukcja: docs/github-cyberfolks.md
+# Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# Opcja: zmienna repozytorium FTP_SERVER_DIR (np. /domains/domena.pl/public_html/)
+# Opcja: sekrety ASARI_* — tylko jeśli kopiujesz XML na runner przed buildem
+# =============================================================================
 
-# Skrypt uruchomi się automatycznie przy każdym 'Push' do głównej gałęzi
+name: Deploy — CyberFolks (FTP)
+
 on:
   push:
     branches:
       - main
       - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cyberfolks
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Pobieranie kodu z repozytorium
+      - name: Pobieranie kodu
         uses: actions/checkout@v4
 
-      - name: ⚙️ Konfiguracja środowiska Node.js
+      - name: Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
 
-      - name: 📦 Instalacja zależności
-        run: npm install
+      - name: Instalacja zależności
+        run: npm ci
 
-      - name: 🏗️ Budowanie statycznej wersji produkcyjnej (SSG)
+      - name: Build statyczny (out/)
+        env:
+          ASARI_DATA_DIR: ${{ secrets.ASARI_DATA_DIR }}
+          ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
         run: npm run build
 
-      - name: 🚀 Wgrywanie plików na serwer Cyberfolks (FTP)
+      - name: Wgranie na CyberFolks (FTP)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
-          server-dir: /public_html/
+          server-dir: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}

@@ -109,7 +109,9 @@ export default async function OfertaSinglePage({ params }: Props) {
               </p>
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 <span className="text-zinc-600">
-                  <span className="font-medium text-zinc-800">Powierzchnia:</span>{" "}
+                  <span className="font-medium text-zinc-800">
+                    Powierzchnia:
+                  </span>{" "}
                   {o.areaLabel}
                 </span>
                 <span className="text-zinc-600">
