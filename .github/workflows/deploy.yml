@@ -1,7 +1,8 @@
 # =============================================================================
 # CyberFolks: build → wgrywanie out/
 #
-# Domyślnie: SFTP (SSH). Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# SFTP: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# Opcja: SFTP_USE_KEY_AUTH=true + sekret SSH_PRIVATE_KEY (gdy „Permission denied” przy haśle)
 #
 # Port SFTP: CyberFolks podaje zwykle 222 (nie 22). Zmienna SFTP_PORT albo pole w Run workflow.
 #            Domyślnie w workflow: 222 — inny hosting: ustaw SFTP_PORT (np. 22).
@@ -54,14 +55,28 @@ jobs:
           ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
         run: npm run build
 
-      - name: Wgranie na CyberFolks (SFTP)
-        if: ${{ vars.DEPLOY_METHOD != 'lftp' }}
+      - name: Wgranie na CyberFolks (SFTP — hasło)
+        if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH != 'true' }}
         uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
           username: ${{ secrets.FTP_USERNAME }}
           server: ${{ secrets.FTP_SERVER }}
           port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
           password: ${{ secrets.FTP_PASSWORD }}
+          local_path: "./out/*"
+          remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          sftp_only: true
+          sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
+
+      - name: Wgranie na CyberFolks (SFTP — klucz SSH)
+        if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH == 'true' }}
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
+        with:
+          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER }}
+          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
           local_path: "./out/*"
           remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
           sftp_only: true

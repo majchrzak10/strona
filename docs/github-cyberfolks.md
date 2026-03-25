@@ -11,7 +11,7 @@ W panelu przy **Status SSH: Włączone** zwykle masz:
 | **Host** | `s71.cyber-folks.pl` albo **dowolna domena** przypisana do konta (oba działają) |
 | **Port** | **222** (to nie jest 22) |
 | **Użytkownik** | login konta FTP/SSH z panelu (DirectAdmin) |
-| **Hasło** | to samo co do panelu DirectAdmin (lub hasło konta FTP — zgodnie z tym, co podaje panel) |
+| **Hasło** | często **osobne hasło konta FTP/SSH** — **nie zawsze** to samo co hasło głównego logowania do DirectAdmin. W DirectAdmin sprawdź / ustaw hasło **dokładnie dla tego użytkownika FTP** co w `FTP_USERNAME` i użyj go w sekrecie `FTP_PASSWORD`. |
 
 **Na GitHubie ustaw:**
 
@@ -48,6 +48,7 @@ Opcja: **`ASARI_DATA_DIR`**, **`ASARI_PHOTOS_DIR`** — pełny build ofert w CI.
 | `FTP_SERVER_DIR` | Ścieżka na serwerze, jeśli nie `/public_html/` |
 | `SFTP_PORT` | Gdy nie CyberFolks — np. `22` na innym hostingu |
 | `DEPLOY_METHOD` = `lftp` | Tylko gdy SFTP nie działa — wtedy FTP/FTPS (port 21) |
+| `SFTP_USE_KEY_AUTH` = `true` | Zamiast hasła: deploy **kluczem SSH** — wtedy sekret `SSH_PRIVATE_KEY` (i opcjonalnie `SSH_KEY_PASSPHRASE`) |
 
 ### Port inny niż u CyberFolks
 
@@ -63,14 +64,27 @@ Firewall / blokada regionów — wtedy **ręczne wgranie** `out/`, **self-hosted
 2. `push` na `main` lub **Run workflow**.
 3. Sprawdź log „Wgranie na CyberFolks (SFTP)”.
 
-## 5. Problemy
+## 5. „Permission denied, please try again” (SFTP)
 
-- **Authentication** — login/hasło/host z panelu (DirectAdmin).
-- **Timeout** — support CyberFolks / whitelist IP (rzadko).
+Połączenie z serwerem **jest** (w logu: *Permanently added … to known hosts*), ale **odrzucane jest hasło**.
+
+1. **Hasło konta FTP ≠ hasło do panelu DirectAdmin** — wejdź w DirectAdmin → **Konta FTP** (lub zarządzanie użytkownikiem SSH) i **ustaw / zresetuj hasło** dla tego samego loginu co w `FTP_USERNAME`. Wklej **nowe** hasło do sekretu `FTP_PASSWORD` na GitHubie (bez spacji na końcu wiersza).
+
+2. **Login** — `FTP_USERNAME` musi być **identyczny** jak w panelu (np. ten z sekcji SSH), nie adres e-mail, jeśli panel podaje krótki login.
+
+3. **Test w FileZilli** — SFTP, host `s71.cyber-folks.pl`, port **222**, ten sam login + hasło. Jeśli **FileZilla też** zwraca „Permission denied”, problem jest po stronie **hasła/loginu** na hostingu, nie GitHuba.
+
+4. **Znaki specjalne w haśle** — rzadko psują `sshpass`; jeśli nadal błąd, ustaw tymczasowo prostsze hasło w panelu, zaktualizuj sekret, zrób deploy ponownie.
+
+5. **Klucz SSH zamiast hasła** — wygeneruj parę (`ssh-keygen -t ed25519`), **klucz publiczny** dodaj w panelu (SSH / authorized keys), **prywatny** wklej jako sekret **`SSH_PRIVATE_KEY`** (cały blok, z końcową pustą linią). Ustaw zmienną **`SFTP_USE_KEY_AUTH`** = `true`. Opcjonalnie sekret **`SSH_KEY_PASSPHRASE`**, jeśli klucz jest z hasłem.
+
+## 6. Inne problemy
+
+- **Timeout** — firewall / support CyberFolks.
 - **Ścieżka** — popraw `FTP_SERVER_DIR`.
 
 Akcja: [SFTP-Deploy-Action](https://github.com/wlixcc/SFTP-Deploy-Action).
 
-## 6. Bezpieczeństwo
+## 7. Bezpieczeństwo
 
 Nie udostępniaj haseł w issue ani w kodzie. Alerty VPN o GitHubie nie dotyczą sekretów w repozytorium.
