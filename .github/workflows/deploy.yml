@@ -3,8 +3,8 @@
 #
 # Domyślnie: SFTP (SSH). Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
 #
-# Port SFTP: zmienna SFTP_PORT (np. 2222) albo przy „Run workflow” pole „Port SFTP”.
-#            Wiele hostingów blokuje 22 z zewnątrz — w panelu sprawdź inny port SSH.
+# Port SFTP: CyberFolks podaje zwykle 222 (nie 22). Zmienna SFTP_PORT albo pole w Run workflow.
+#            Domyślnie w workflow: 222 — inny hosting: ustaw SFTP_PORT (np. 22).
 #
 # Gdy SFTP w ogóle niedostępny: zmienna DEPLOY_METHOD = lftp (FTP/FTPS na porcie 21)
 # Opcja: FTP_PROTOCOL (ftps / ftps-legacy) przy lftp
@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       sftp_port:
-        description: "Port SFTP/SSH (np. 22, 2222). Puste = zmienna SFTP_PORT lub 22."
+        description: "Port SFTP (CyberFolks: 222). Puste = zmienna SFTP_PORT lub 222."
         required: false
         type: string
 
@@ -60,7 +60,7 @@ jobs:
         with:
           username: ${{ secrets.FTP_USERNAME }}
           server: ${{ secrets.FTP_SERVER }}
-          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 22) }}
+          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
           password: ${{ secrets.FTP_PASSWORD }}
           local_path: "./out/*"
           remote_path: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}

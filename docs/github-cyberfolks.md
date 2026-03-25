@@ -1,67 +1,76 @@
 # GitHub Actions → CyberFolks (SFTP)
 
-Przy **pushu na `main` lub `master`** (albo **Actions → Deploy — CyberFolks (SFTP) → Run workflow**) GitHub buduje stronę (`npm run build` → `out/`) i wgrywa ją na hosting przez **SFTP** (SSH, zwykle port **22**).
+Przy **pushu na `main` lub `master`** (albo **Actions → Deploy — CyberFolks (SFTP) → Run workflow**) GitHub buduje stronę (`npm run build` → `out/`) i wgrywa ją na hosting przez **SFTP**.
 
-Dlaczego nie FTP? Wiele hostingów (w tym CyberFolks) **zrywa zwykłe połączenia FTP** z adresów GitHub Actions (`Server sent FIN packet`). **SFTP** zwykle działa stabilniej z tym samym loginem i hasłem co w panelu.
+## CyberFolks — SSH włączone (typowe parametry)
 
-## 1. Dane w panelu CyberFolks
+W panelu przy **Status SSH: Włączone** zwykle masz:
 
-- **Host** — często ten sam co „serwer FTP” (np. `ftp.twojadomena.pl`) lub osobny host SFTP; sprawdź w panelu / w FileZilli przy połączeniu **SFTP**.
-- **Login** i **hasło** — to samo konto co FTP.
-- **Katalog** — np. `/public_html/` lub `/domains/nazwa.pl/public_html/`.
+| Pole | Przykład |
+|------|----------|
+| **Host** | `s71.cyber-folks.pl` albo **dowolna domena** przypisana do konta (oba działają) |
+| **Port** | **222** (to nie jest 22) |
+| **Użytkownik** | login konta FTP/SSH z panelu (DirectAdmin) |
+| **Hasło** | to samo co do panelu DirectAdmin (lub hasło konta FTP — zgodnie z tym, co podaje panel) |
 
-W **FileZilli**: *Plik → Menedżer witryn → Nowe połączenie* → protokół **SFTP**, port **22** — jeśli tu działa, workflow też powinien.
+**Na GitHubie ustaw:**
+
+- Sekret **`FTP_SERVER`** = `s71.cyber-folks.pl` (albo Twoja domena).
+- Sekret **`FTP_USERNAME`** = dokładnie login z panelu (np. ten z sekcji SSH).
+- Sekret **`FTP_PASSWORD`** = odpowiednie hasło (nie wklejaj go na czacie ani do repo).
+
+Opcjonalnie zmienna **`SFTP_PORT`** = `222` — w workflow domyślnie i tak jest **222**, więc możesz pominąć, dopóki nie zmienisz hostingu.
+
+**Odciski kluczy serwera (ECDSA / ED25519 / RSA)** — przy pierwszym połączeniu klient (FileZilla, GitHub Actions) pyta o zaufanie hosta; możesz porównać z tymi z panelu.
+
+## 1. Ogólne (inni dostawcy)
+
+- **Katalog** na serwerze — np. `/public_html/` lub `/domains/nazwa.pl/public_html/` (sprawdź w FileZilli po połączeniu SFTP).
+
+W **FileZilli**: protokół **SFTP**, host jak wyżej, port **222** (CyberFolks).
 
 ## 2. Sekrety w GitHubie
 
-**Settings → Secrets and variables → Actions → New repository secret:**
+**Settings → Secrets and variables → Actions:**
 
 | Nazwa sekretu    | Wartość |
 |------------------|---------|
-| `FTP_SERVER`     | host (bez `ftp://`, bez ścieżki) |
-| `FTP_USERNAME`   | login |
+| `FTP_SERVER`     | host (bez `ftp://`) |
+| `FTP_USERNAME`   | login SSH/SFTP |
 | `FTP_PASSWORD`   | hasło |
 
-Nazwy zostają `FTP_*`, żeby nie zmieniać istniejących sekretów — to **to samo konto**, tylko protokół na runnerze to SFTP.
+Opcja: **`ASARI_DATA_DIR`**, **`ASARI_PHOTOS_DIR`** — pełny build ofert w CI.
 
-Opcja: **`ASARI_DATA_DIR`**, **`ASARI_PHOTOS_DIR`** — jeśli chcesz pełny build ofert w CI (XML na runnerze).
+## 3. Zmienne (Variables)
 
-## 3. Ścieżka i port (Variables)
+| Nazwa | Kiedy |
+|-------|--------|
+| `FTP_SERVER_DIR` | Ścieżka na serwerze, jeśli nie `/public_html/` |
+| `SFTP_PORT` | Gdy nie CyberFolks — np. `22` na innym hostingu |
+| `DEPLOY_METHOD` = `lftp` | Tylko gdy SFTP nie działa — wtedy FTP/FTPS (port 21) |
 
-**Variables → New repository variable:**
+### Port inny niż u CyberFolks
 
-| Nazwa | Przykład |
-|-------|----------|
-| `FTP_SERVER_DIR` | `/domains/moja-domena.pl/public_html/` |
-| `SFTP_PORT` | np. `2222` — **jeśli port 22 nie działa** (patrz niżej) |
+Workflow domyślnie używa portu **222**. Na hostingu ze standardowym SSH ustaw **`SFTP_PORT`** = `22`.
 
-Gdy `FTP_SERVER_DIR` jest pusta, używane jest `/public_html/`.
+### Gdy SFTP z GitHuba nadal nie działa
 
-### Port 22 nie działa / „connection refused”
-
-1. W **panelu CyberFolks** (lub w mailu od hostingu) sprawdź, czy podany jest **inny port SSH/SFTP** niż 22 (czasem **2222**, **22022** itd.). Ustaw wtedy zmienną **`SFTP_PORT`** na tę wartość (same cyfry).
-
-2. Albo **Actions → Deploy — CyberFolks (SFTP) → Run workflow** i w polu **„Port SFTP”** wpisz ten port (np. `2222`).
-
-3. Na **współdzielonym hostingu** często **SSH/SFTP jest wyłączone** — działa tylko **FTP** (port 21). Wtedy ustaw zmienną **`DEPLOY_METHOD`** = `lftp` (workflow wgra pliki przez **FTP/FTPS** zamiast SFTP). Opcjonalnie **`FTP_PROTOCOL`**: `ftps` lub `ftps-legacy`, **`FTP_PORT`**: `21` (domyślnie).
-
-4. Jeśli i FTP z GitHuba się zrywa (`FIN packet`), zostało **ręczne wgranie** `out/` (FileZilla), **inny CI** z serwerem w UE albo **self-hosted runner** GitHub (np. u Ciebie w domu).
+Firewall / blokada regionów — wtedy **ręczne wgranie** `out/`, **self-hosted runner** albo **`DEPLOY_METHOD=lftp`**.
 
 ## 4. Pierwszy deploy
 
-1. `push` na `main`.
-2. **Actions** → **Deploy — CyberFolks (SFTP)** → sprawdź logi przy kroku „Wgranie na CyberFolks (SFTP)”.
-3. Odśwież stronę w przeglądarce.
+1. Uzupełnij sekrety i ewentualnie `FTP_SERVER_DIR`.
+2. `push` na `main` lub **Run workflow**.
+3. Sprawdź log „Wgranie na CyberFolks (SFTP)”.
 
-## 5. Problemy z SFTP
+## 5. Problemy
 
-- **Permission denied / authentication** — sprawdź login, hasło, ewentualnie osobny host SFTP z panelu.
-- **Connection timed out** — firewall / blokada krajów (np. USA); zapytaj support CyberFolks o połączenia z GitHub Actions.
-- **Zła ścieżka** — popraw `FTP_SERVER_DIR` (musisz widzieć ten sam katalog w FileZilli).
-- **Katalog nie istnieje** — przy `sftp_only: true` zdalny folder musi już być (zwykle `public_html` jest).
+- **Authentication** — login/hasło/host z panelu (DirectAdmin).
+- **Timeout** — support CyberFolks / whitelist IP (rzadko).
+- **Ścieżka** — popraw `FTP_SERVER_DIR`.
 
 Akcja: [SFTP-Deploy-Action](https://github.com/wlixcc/SFTP-Deploy-Action).
 
-## 6. Surfshark / alerty o GitHubie
+## 6. Bezpieczeństwo
 
-Ogólne alerty VPN o GitHubie **nie dotyczą** sekretów w repozytorium — te są przechowywane po stronie GitHuba.
+Nie udostępniaj haseł w issue ani w kodzie. Alerty VPN o GitHubie nie dotyczą sekretów w repozytorium.
