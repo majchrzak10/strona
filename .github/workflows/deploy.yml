@@ -1,15 +1,11 @@
 # =============================================================================
-# CyberFolks: build → wgrywanie out/
+# CyberFolks: build → rsync ./out/ przez SSH (port 222) — bez bugów sftp „put”.
 #
-# SFTP: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-# Opcja: SFTP_USE_KEY_AUTH=true + sekret SSH_PRIVATE_KEY (gdy „Permission denied” przy haśle)
-#
-# Port SFTP: CyberFolks podaje zwykle 222 (nie 22). Zmienna SFTP_PORT albo pole w Run workflow.
-#            Domyślnie w workflow: 222 — inny hosting: ustaw SFTP_PORT (np. 22).
-#
-# Gdy SFTP w ogóle niedostępny: zmienna DEPLOY_METHOD = lftp (FTP/FTPS na porcie 21)
-# Opcja: FTP_PROTOCOL (ftps / ftps-legacy) przy lftp
-# Katalog zdalny: FTP_SERVER_DIR — ustaw jak w FileZilli (często domains/domena.pl/public_html/ albo public_html/)
+# Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# Opcja: SFTP_USE_KEY_AUTH=true + SSH_PRIVATE_KEY (+ opcjonalnie SSH_KEY_PASSPHRASE)
+# Port: zmienna SFTP_PORT lub 222 | Katalog: FTP_SERVER_DIR = jak w FileZilli (np. domains/domena.pl/public_html)
+# Jeśli masz zmienną FTP_SERVER_DIR=/public_html/ — usuń ją lub zmień na ścieżkę z FileZilli.
+# DEPLOY_METHOD=lftp — fallback FTP/FTPS
 # =============================================================================
 
 name: Deploy — CyberFolks (SFTP)
@@ -22,7 +18,7 @@ on:
   workflow_dispatch:
     inputs:
       sftp_port:
-        description: "Port SFTP (CyberFolks: 222). Puste = zmienna SFTP_PORT lub 222."
+        description: "Port SSH (CyberFolks: 222). Puste = zmienna SFTP_PORT lub 222."
         required: false
         type: string
 
@@ -32,6 +28,10 @@ concurrency:
 
 permissions:
   contents: read
+
+env:
+  SSH_PORT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && github.event.inputs.sftp_port || (vars.SFTP_PORT != '' && vars.SFTP_PORT || '222') }}
+  REMOTE_PATH: ${{ vars.FTP_SERVER_DIR || 'public_html' }}
 
 jobs:
   build-and-deploy:
@@ -55,34 +55,40 @@ jobs:
           ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
         run: npm run build
 
-      - name: Wgranie na CyberFolks (SFTP — hasło)
+      - name: Wgranie na serwer (rsync + SSH, hasło)
         if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH != 'true' }}
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.FTP_USERNAME }}
-          server: ${{ secrets.FTP_SERVER }}
-          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # Cały katalog out/ (bez /*) — inaczej sftp zgłasza „destination is not a directory”
-          local_path: "./out"
-          # W SFTP chroot często nie ma /public_html u roota — ustaw FTP_SERVER_DIR jak ścieżka „Zdalna witryna” w FileZilli
-          remote_path: ${{ vars.FTP_SERVER_DIR || 'public_html' }}
-          sftp_only: true
-          sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
+        env:
+          SSHPASS: ${{ secrets.FTP_PASSWORD }}
+          SSH_HOST: ${{ secrets.FTP_SERVER }}
+          SSH_USER: ${{ secrets.FTP_USERNAME }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq rsync sshpass openssh-client
+          REMOTE="${REMOTE_PATH%/}"
+          echo "rsync → ${SSH_USER}@${SSH_HOST}:${REMOTE}/ (port ${SSH_PORT})"
+          sshpass -e rsync -avz --delete \
+            -e "ssh -p ${SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_USER}@${SSH_HOST}:${REMOTE}/"
 
-      - name: Wgranie na CyberFolks (SFTP — klucz SSH)
+      - name: Wgranie na serwer (rsync + SSH, klucz)
         if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH == 'true' }}
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
-        with:
-          username: ${{ secrets.FTP_USERNAME }}
-          server: ${{ secrets.FTP_SERVER }}
-          port: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && fromJSON(github.event.inputs.sftp_port) || (vars.SFTP_PORT != '' && fromJSON(vars.SFTP_PORT) || 222) }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
-          local_path: "./out"
-          remote_path: ${{ vars.FTP_SERVER_DIR || 'public_html' }}
-          sftp_only: true
-          sftpArgs: "-o StrictHostKeyChecking=accept-new -o ConnectTimeout=60"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.FTP_SERVER }}
+          SSH_USER: ${{ secrets.FTP_USERNAME }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq rsync openssh-client
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          REMOTE="${REMOTE_PATH%/}"
+          rsync -avz --delete \
+            -e "ssh -p ${SSH_PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_USER}@${SSH_HOST}:${REMOTE}/"
+          rm -f ~/.ssh/deploy_key
 
       - name: Wgranie na CyberFolks (FTP/FTPS — gdy SFTP niemożliwy)
         if: ${{ vars.DEPLOY_METHOD == 'lftp' }}

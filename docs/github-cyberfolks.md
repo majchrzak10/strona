@@ -117,7 +117,7 @@ Połączenie z serwerem **jest** (w logu: *Permanently added … to known hosts*
 - **Timeout** — firewall / support CyberFolks.
 - **Ścieżka** — popraw `FTP_SERVER_DIR`.
 
-Akcja: [SFTP-Deploy-Action](https://github.com/wlixcc/SFTP-Deploy-Action).
+Deploy z GitHub Actions używa **`rsync` przez SSH** (nie osobnej akcji SFTP) — stabilniejsze wgrywanie folderu `out/`.
 
 ## 7. Bezpieczeństwo
 
