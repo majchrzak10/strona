@@ -1,7 +1,8 @@
 # =============================================================================
 # GitHub → CyberFolks (FTP). Instrukcja: docs/github-cyberfolks.md
 # Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-# Opcja: zmienna repozytorium FTP_SERVER_DIR (np. /domains/domena.pl/public_html/)
+# Opcja: zmienna FTP_SERVER_DIR (np. /domains/domena.pl/public_html/)
+# Opcja: FTP_PROTOCOL = ftps lub ftps-legacy (gdy zwykły ftp zrywa połączenie — CyberFolks)
 # Opcja: sekrety ASARI_* — tylko jeśli kopiujesz XML na runner przed buildem
 # =============================================================================
 
@@ -51,3 +52,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./out/
           server-dir: ${{ vars.FTP_SERVER_DIR || '/public_html/' }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftp' }}
+          port: ${{ vars.FTP_PORT != '' && fromJSON(vars.FTP_PORT) || 21 }}
+          timeout: 120000
+          security: loose
+          log-level: standard

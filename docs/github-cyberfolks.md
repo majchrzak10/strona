@@ -49,11 +49,28 @@ Workflow używa: `vars.FTP_SERVER_DIR`, a gdy jest pusta — `/public_html/`.
 2. **Actions** → wybierz workflow **Deploy — CyberFolks (FTP)** → ostatnie uruchomienie → sprawdź logi.
 3. Wejdź na stronę w przeglądarce — powinieneś zobaczyć nową wersję z `out/`.
 
-## 5. Problemy z FTP
+## 5. Problemy z FTP (np. „Server sent FIN packet”, „Failed to connect”)
 
-- **Timeout / odrzucone połączenie** — w panelu sprawdź, czy wymagany jest **FTPS**; wtedy w `.github/workflows/deploy.yml` w kroku FTP dopisz pod `password:` linię: `protocol: ftps` (czasem `ftps-legacy`). Dokumentacja akcji: [FTP-Deploy-Action](https://github.com/SamKirkland/FTP-Deploy-Action).
-- **Złe miejsce na serwerze** — popraw `FTP_SERVER_DIR` albo `server-dir` w workflow.
-- **Puste hasło w logach** — sekrety GitHub **nie wyświetlają** wartości w logach; to normalne.
+Serwery typu CyberFolks często **zrywają** zwykłe połączenie **FTP z obcych IP** (firewall) albo wymagają **FTPS** albo innego portu.
+
+1. **Spróbuj FTPS (explicit)** — w repozytorium: **Settings → Variables → Actions** → **New variable**  
+   - Nazwa: `FTP_PROTOCOL`  
+   - Wartość: `ftps`  
+   Zrób ponownie **Run workflow**. Jeśli nadal błąd, zmień wartość na `ftps-legacy` (implicit FTPS — rzadziej).
+
+2. **Host w sekrecie `FTP_SERVER`** — sam adres, np. `ftp.twojadomena.pl`, **bez** `ftp://` i bez ścieżki.
+
+3. **Blokada krajów / firewall** — w panelu CyberFolks sprawdź, czy nie masz zablokowanych połączeń z **USA** (runnery GitHub Actions są głównie tam). Ewentualnie **whitelist IP** — w dokumentacji hostingu lub z supportem: „GitHub Actions outbound IPs” (albo tymczasowo wyłącz restrykcyjną blokadę do testu).
+
+4. **Port** — domyślnie **21**. Jeśli w panelu masz inny (np. FTPS na **990**), dodaj zmienną **`FTP_PORT`** z wartością `990` (same cyfry, workflow zamienia je na numer).
+
+5. **Tylko SFTP (SSH, port 22)** — akcja `FTP-Deploy-Action` **nie obsługuje SFTP**. Jeśli hosting podaje wyłącznie SFTP, użyj innej akcji, np. [SamKirkland/web-deploy](https://github.com/SamKirkland/web-deploy) (SSH), albo wgrywaj `out/` ręcznie (FileZilla).
+
+6. **Zła ścieżka** — popraw zmienną `FTP_SERVER_DIR`.
+
+7. **Hasło w logach** — sekrety się nie pokazują; to normalne.
+
+Dokumentacja akcji: [FTP-Deploy-Action](https://github.com/SamKirkland/FTP-Deploy-Action).
 
 ## 6. Surfshark / alerty o GitHubie
 
