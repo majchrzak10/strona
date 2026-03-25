@@ -28,7 +28,7 @@ Jeśli nie jesteś pewien katalogu, w FileZilli po zalogowaniu zobaczysz, gdzie 
 | `ASARI_DATA_DIR`    | np. `./asari-export` (musisz wcześniej skopiować pliki w workflow) |
 | `ASARI_PHOTOS_DIR`  | jeśli zdjęcia są w osobnym folderze                                |
 
-Bez XML na GitHubie build się uda, ale **lista ofert przy eksporcie statycznym może być pusta** — wtedy strony `/oferty/...` nie powstaną w `out/`. Eksport Asari wysyłany **tylko na serwer FTP (poza GitHub)** nie trafia automatycznie do Actions; żeby CI miało dane, trzeba osobnego kroku (kopia ZIP w sekrecie, artifact, pobranie z FTP przed buildem itd.).
+Bez XML na GitHubie build się **powinien udać**: strona `/oferty/[slug]` używa technicznego slug-a tylko po to, by Next.js (`output: export`) miał co wygenerować, gdy lista ofert jest pusta; prawdziwe podstrony ofert pojawią się dopiero, gdy w workflow podasz `ASARI_DATA_DIR` (lub skopiujesz eksport XML na runner przed `npm run build`). Eksport Asari wysyłany tylko na serwer FTP **nie** trafia automatycznie do Actions.
 
 ## 3. Ścieżka na serwerze (opcjonalnie)
 

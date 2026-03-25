@@ -12,15 +12,25 @@ import { notFound } from "next/navigation";
 
 const OG_FALLBACK_IMAGE = "/hero-biuro.jpg.png";
 
+/** Gdy na CI nie ma XML Asari, lista ofert jest pusta. Next.js 16 + output:export wymaga >0 ścieżek, inaczej rzuca mylący błąd „missing generateStaticParams”. */
+const STATIC_EXPORT_EMPTY_SLUG = "__static_export_no_offers__";
+
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
   const { offers } = await loadAsariOffers();
-  return offers.map((o) => ({ slug: o.slug }));
+  const params = offers.map((o) => ({ slug: o.slug }));
+  if (params.length === 0) {
+    return [{ slug: STATIC_EXPORT_EMPTY_SLUG }];
+  }
+  return params;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  if (slug === STATIC_EXPORT_EMPTY_SLUG) {
+    return { title: "Oferta — Dan-Dom Nieruchomości", robots: { index: false, follow: false } };
+  }
   const { offers } = await loadAsariOffers();
   const o = offers.find((x) => x.slug === slug);
   if (!o) return { title: "Oferta — Dan-Dom Nieruchomości" };
@@ -55,6 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function OfertaSinglePage({ params }: Props) {
   const { slug } = await params;
+  if (slug === STATIC_EXPORT_EMPTY_SLUG) notFound();
   const { offers, error } = await loadAsariOffers();
   const o = offers.find((x) => x.slug === slug);
   if (!o) notFound();
@@ -109,9 +120,7 @@ export default async function OfertaSinglePage({ params }: Props) {
               </p>
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 <span className="text-zinc-600">
-                  <span className="font-medium text-zinc-800">
-                    Powierzchnia:
-                  </span>{" "}
+                  <span className="font-medium text-zinc-800">Powierzchnia:</span>{" "}
                   {o.areaLabel}
                 </span>
                 <span className="text-zinc-600">
