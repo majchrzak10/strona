@@ -29,7 +29,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   if (slug === STATIC_EXPORT_EMPTY_SLUG) {
-    return { title: "Oferta — Dan-Dom Nieruchomości", robots: { index: false, follow: false } };
+    return {
+      title: "Oferta — Dan-Dom Nieruchomości",
+      robots: { index: false, follow: false },
+    };
   }
   const { offers } = await loadAsariOffers();
   const o = offers.find((x) => x.slug === slug);
@@ -120,7 +123,9 @@ export default async function OfertaSinglePage({ params }: Props) {
               </p>
               <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 <span className="text-zinc-600">
-                  <span className="font-medium text-zinc-800">Powierzchnia:</span>{" "}
+                  <span className="font-medium text-zinc-800">
+                    Powierzchnia:
+                  </span>{" "}
                   {o.areaLabel}
                 </span>
                 <span className="text-zinc-600">
