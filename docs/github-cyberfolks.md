@@ -23,6 +23,36 @@ Opcjonalnie zmienna **`SFTP_PORT`** = `222` — w workflow domyślnie i tak jest
 
 **Odciski kluczy serwera (ECDSA / ED25519 / RSA)** — przy pierwszym połączeniu klient (FileZilla, GitHub Actions) pyta o zaufanie hosta; możesz porównać z tymi z panelu.
 
+### Jak włączyć / skonfigurować SSH na CyberFolks
+
+1. **Włączenie SSH** — w panelu (DirectAdmin / cyber_Admin) znajdź sekcję **SSH** i upewnij się, że dostęp jest **włączony** (zobaczysz host, port **222**, login).  
+   Oficjalna pomoc: [Dostęp SSH — jak włączyć SSH](https://cyberfolks.pl/pomoc/dostep-ssh-jak-wlaczyc-ssh/), [Jak zalogować się na SSH?](https://cyberfolks.pl/pomoc/jak-zalogowac-sie-na-ssh/).
+
+2. **Logowanie hasłem** — ustaw **hasło konta FTP** (tego samego użytkownika co SSH). W DirectAdmin: **Konta FTP** → wybierz konto → **zmień hasło**. To hasło wklejasz do sekretu `FTP_PASSWORD` na GitHubie (nie myl z hasłem do samego panelu, jeśli są różne).
+
+3. **Logowanie kluczem SSH** (bez hasła w GitHubie — wygodne na GitHub Actions) — najpierw na swoim komputerze wygeneruj parę kluczy, np. w PowerShell:
+   ```powershell
+   ssh-keygen -t ed25519 -C "github-deploy" -f "$env:USERPROFILE\.ssh\github_cyberfolks_ed25519"
+   ```
+   - Plik **`.pub`** to klucz **publiczny** (ten idzie na serwer).
+   - Plik **bez** `.pub` to klucz **prywatny** (tylko do sekretu `SSH_PRIVATE_KEY` na GitHubie — **nikomu go nie wysyłaj**).
+
+   **Gdzie wkleić publiczny klucz w CyberFolks:**
+   - **DirectAdmin:** *Pozostałe ustawienia* → **Klucze SSH** → *Wklej istniejący klucz SSH* → wklej **całą jedną linię** z pliku `.pub` → **Utwórz**.  
+     [Pomoc: Logowanie SSH z użyciem klucza](https://cyberfolks.pl/pomoc/logowanie-ssh-z-uzyciem-klucza/)
+   - Albo **cyber_Admin:** *Serwer WWW* → **FTP** → **Edytuj** konto → zakładka **KLUCZE SSH** → wklej pole **KLUCZ** (treść `.pub`) → **DODAJ**. Klucz może być potem **aktywny** (suwak zielony).
+
+4. **GitHub Actions** — ustaw zmienną **`SFTP_USE_KEY_AUTH`** = `true`, sekret **`SSH_PRIVATE_KEY`** = cała zawartość pliku prywatnego (z nagłówkiem `BEGIN ... KEY`). Opcjonalnie **`SSH_KEY_PASSPHRASE`**, jeśli klucz jest z hasłem.
+
+5. **Test z komputera** (opcjonalnie):
+   ```powershell
+   ssh -p 222 TWOJ_LOGIN@s71.cyber-folks.pl
+   ```
+   lub z kluczem:
+   ```powershell
+   ssh -p 222 -i "$env:USERPROFILE\.ssh\github_cyberfolks_ed25519" TWOJ_LOGIN@s71.cyber-folks.pl
+   ```
+
 ## 1. Ogólne (inni dostawcy)
 
 - **Katalog** na serwerze — np. `/public_html/` lub `/domains/nazwa.pl/public_html/` (sprawdź w FileZilli po połączeniu SFTP).
