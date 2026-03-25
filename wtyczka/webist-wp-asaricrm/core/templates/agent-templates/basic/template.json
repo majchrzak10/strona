@@ -1,0 +1,28 @@
+{
+    "name": "Podstawowy",
+    "desc": "Jest to podstawowy template archiwum nieruchomości agenta.",
+    "version": "1.0",
+	"type": "internal",
+	"usable_settings": {
+		"WWAC_Archives_Agent_hero": 1,
+		"WWAC_Archives_Agent_AgentPanel": 1,
+		"WWAC_Archives_Agent_AgentPhoto": 1,
+		"WWAC_Archives_Agent_AgentLicenseNr": 1,
+		"WWAC_Archives_Agent_AgentNames": 1,
+		"WWAC_Archives_Agent_AgentPhoneNumbers": 1,
+		"WWAC_Archives_Agent_AgentEmailAddress": 1,
+		"WWAC_Archives_Agent_propertyPrice": 1,
+		"WWAC_Archives_Agent_Localization": 1,
+		"WWAC_Archives_Agent_Category": 1,
+		"WWAC_Archives_Agent_Type": 1,
+		"WWAC_Archives_Agent_propertyArea": 1,
+		"WWAC_Archives_Agent_propertyYearBuilt": 1,
+		"WWAC_Archives_Agent_propertyFloor": 1,
+		"WWAC_Archives_Agent_propertyFloors": 1,
+		"WWAC_Archives_Agent_propertyGarage": 1,
+		"WWAC_Archives_Agent_propertyParkingSpacesNo": 1,
+		"WWAC_Archives_Agent_propertyRooms": 1,
+		"WWAC_Archives_Agent_propertyElevator": 1,
+		"WWAC_Archives_Agent_mortgageMarket": 1
+	}
+}

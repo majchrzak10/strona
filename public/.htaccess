@@ -1,0 +1,55 @@
+# ============================================================
+#  Dan-Dom Nieruchomości — Apache config dla Cyberfolks
+#  Next.js static export (output: "export", trailingSlash: true)
+# ============================================================
+
+Options -Indexes
+DirectoryIndex index.html
+
+# --- HTTPS redirect ------------------------------------------
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+# --- www → bez www (lub odwrotnie — wybierz jedno) ----------
+# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+# RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+
+# --- Obsługa tras Next.js (trailingSlash: true) --------------
+# Przekieruj /oferty do /oferty/ (jeśli brak slash)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !/$
+RewriteRule ^(.+[^/])$ /$1/ [R=301,L]
+
+# Serwuj index.html dla katalogów
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*)$ $1/index.html [L]
+
+# Fallback — 404.html z Next.js
+ErrorDocument 404 /404/index.html
+
+# --- Cache statycznych assetów -------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html                 "access plus 1 hour"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType image/jpeg                "access plus 1 year"
+  ExpiresByType image/png                 "access plus 1 year"
+  ExpiresByType image/webp                "access plus 1 year"
+  ExpiresByType image/svg+xml             "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+# --- Kompresja gzip ------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# --- Bezpieczeństwo ------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

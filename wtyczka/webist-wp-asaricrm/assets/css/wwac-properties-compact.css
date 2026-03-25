@@ -1,0 +1,129 @@
+.nieruchomosci-compact-card{
+	display: flex;
+	gap: 14px;
+	border: 1px solid rgba(0,0,0,.12);
+	border-radius: 12px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 6px 18px rgba(0,0,0,.06);
+	margin-bottom: 16px;
+}
+
+.nieruchomosci-compact-thumb{
+	flex: 0 0 240px;
+	min-height: 160px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	display: block;
+	position: relative;
+}
+
+.nieruchomosci-compact-thumb img{
+	width: 0;
+	height: 0;
+	opacity: 0;
+	position: absolute;
+}
+
+.nieruchomosci-compact-body{
+	flex: 1;
+	padding: 14px 14px 14px 0;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.nieruchomosci-compact-title{
+	margin: 2px 0 10px;
+	font-size: 18px;
+	line-height: 1.25;
+}
+
+.nieruchomosci-compact-title a{
+	text-decoration: none;
+	color: inherit;
+}
+
+.nieruchomosci-compact-title a:hover{
+	text-decoration: underline;
+}
+
+.nieruchomosci-compact-meta{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 14px;
+	font-size: 14px;
+	line-height: 1.35;
+}
+
+.nieruchomosci-compact-meta span{
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+.nieruchomosci-compact-loc{
+	white-space: normal;
+}
+
+.nieruchomosci-compact-actions{
+	margin-top: 12px;
+}
+
+.nieruchomosci-compact-card .nieruchomosci-see-more-button{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 14px;
+	border-radius: 10px;
+	text-decoration: none;
+	border: 1px solid rgba(0,0,0,.18);
+	font-weight: 600;
+}
+
+.nieruchomosci-pagination{
+	margin-top: 18px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.nieruchomosci-pagination a{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 38px;
+	height: 38px;
+	padding: 0 10px;
+	border-radius: 10px;
+	text-decoration: none;
+	border: 1px solid rgba(0,0,0,.16);
+}
+
+.nieruchomosci-pagination a.active{
+	border-color: rgba(0,0,0,.35);
+	font-weight: 700;
+}
+
+@media (max-width: 768px){
+	.nieruchomosci-compact-card{
+		flex-direction: column;
+	}
+	
+	.nieruchomosci-compact-thumb{
+		flex-basis: auto;
+		width: 100%;
+		min-height: 190px;
+	}
+	
+	.nieruchomosci-compact-body{
+		padding: 12px;
+	}
+	
+	.nieruchomosci-compact-meta span{
+		white-space: normal;
+	}
+}

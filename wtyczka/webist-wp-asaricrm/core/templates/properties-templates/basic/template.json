@@ -1,0 +1,23 @@
+{
+    "name": "Podstawowy",
+    "desc": "Jest to podstawowy template archiwum nieruchomości.",
+    "version": "1.0",
+	"type": "internal",
+	"usable_settings": {
+		"WWAC_Archives_AllOffers_hero": 1,
+		"WWAC_Archives_AllOffers_propertyPrice": 1,
+		"WWAC_Archives_AllOffers_Localization": 1,
+		"WWAC_Archives_AllOffers_Category": 1,
+		"WWAC_Archives_AllOffers_Type": 1,
+		"WWAC_Archives_AllOffers_propertyArea": 1,
+		"WWAC_Archives_AllOffers_propertyYearBuilt": 1,
+		"WWAC_Archives_AllOffers_propertyFloor": 1,
+		"WWAC_Archives_AllOffers_propertyFloors": 1,
+		"WWAC_Archives_AllOffers_propertyGarage": 1,
+		"WWAC_Archives_AllOffers_propertyParkingSpacesNo": 1,
+		"WWAC_Archives_AllOffers_propertyRooms": 1,
+		"WWAC_Archives_AllOffers_propertyElevator": 1,
+		"WWAC_Archives_AllOffers_mortgageMarket": 1,
+		"WWAC_Archives_AllOffers_excerpt": 1
+	}
+}

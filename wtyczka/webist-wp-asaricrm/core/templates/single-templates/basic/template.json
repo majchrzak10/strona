@@ -1,0 +1,28 @@
+{
+    "name": "Podstawowy",
+    "desc": "Jest to podstawowy template pojedynczej nieruchomości.",
+    "version": "1.0",
+	"type": "internal",
+	"usable_settings": {
+		"WWAC_Archives_SingleOffer_hero": 1,
+		"WWAC_Archives_SingleOffer_AgentPanel": 1,
+		"WWAC_Archives_SingleOffer_AgentPhoto": 1,
+		"WWAC_Archives_SingleOffer_AgentLicenseNr": 1,
+		"WWAC_Archives_SingleOffer_AgentNames": 1,
+		"WWAC_Archives_SingleOffer_AgentPhoneNumbers": 1,
+		"WWAC_Archives_SingleOffer_AgentEmailAddress": 1,
+		"WWAC_Archives_SingleOffer_propertyPrice": 1,
+		"WWAC_Archives_SingleOffer_Localization": 1,
+		"WWAC_Archives_SingleOffer_Category": 1,
+		"WWAC_Archives_SingleOffer_Type": 1,
+		"WWAC_Archives_SingleOffer_propertyArea": 1,
+		"WWAC_Archives_SingleOffer_propertyYearBuilt": 1,
+		"WWAC_Archives_SingleOffer_propertyFloor": 1,
+		"WWAC_Archives_SingleOffer_propertyFloors": 1,
+		"WWAC_Archives_SingleOffer_propertyGarage": 1,
+		"WWAC_Archives_SingleOffer_propertyParkingSpacesNo": 1,
+		"WWAC_Archives_SingleOffer_propertyRooms": 1,
+		"WWAC_Archives_SingleOffer_propertyElevator": 1,
+		"WWAC_Archives_SingleOffer_mortgageMarket": 1
+	}
+}

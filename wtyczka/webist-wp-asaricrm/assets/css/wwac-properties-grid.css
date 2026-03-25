@@ -1,0 +1,136 @@
+.nieruchomosci-posts{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.nieruchomosci-grid-card{
+	box-sizing: border-box;
+	width: calc((100% - 32px) / 3);
+	margin: 0;
+	border: 1px solid rgba(0,0,0,.12);
+	border-radius: 12px;
+	overflow: hidden;
+	background: #fff;
+	box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+.nieruchomosci-grid-thumb{
+	display: block;
+	position: relative;
+	min-height: 190px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.nieruchomosci-grid-thumb img{
+	width: 0;
+	height: 0;
+	opacity: 0;
+	position: absolute;
+}
+
+.nieruchomosci-grid-price{
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
+	padding: 8px 10px;
+	border-radius: 10px;
+	background: rgba(0,0,0,.65);
+	color: #fff;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 1;
+}
+
+.nieruchomosci-grid-body{
+	padding: 12px;
+}
+
+.nieruchomosci-grid-title{
+	margin: 2px 0 10px;
+	font-size: 16px;
+	line-height: 1.25;
+}
+
+.nieruchomosci-grid-title a{
+	text-decoration: none;
+	color: inherit;
+}
+
+.nieruchomosci-grid-title a:hover{
+	text-decoration: underline;
+}
+
+.nieruchomosci-grid-meta{
+	font-size: 14px;
+	line-height: 1.35;
+	margin-bottom: 12px;
+}
+
+.nieruchomosci-grid-meta-row{
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-bottom: 6px;
+}
+
+.nieruchomosci-grid-card .nieruchomosci-see-more-button{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 14px;
+	border-radius: 10px;
+	text-decoration: none;
+	border: 1px solid rgba(0,0,0,.18);
+	font-weight: 600;
+}
+
+.nieruchomosci-pagination{
+	margin-top: 18px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	justify-content: center;
+}
+
+.nieruchomosci-pagination a{
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 38px;
+	height: 38px;
+	padding: 0 12px;
+	border-radius: 10px;
+	text-decoration: none;
+	border: 1px solid rgba(0,0,0,.16);
+	background: #fff;
+	line-height: 1;
+}
+
+.nieruchomosci-pagination a:hover{
+	border-color: rgba(0,0,0,.35);
+}
+
+.nieruchomosci-pagination a.active{
+	border-color: rgba(0,0,0,.45);
+	font-weight: 700;
+}
+
+.nieruchomosci-pagination a.skipper{
+	min-width: 44px;
+}
+
+@media (max-width: 1024px){
+	.nieruchomosci-grid-card{
+		width: calc((100% - 16px) / 2);
+	}
+}
+
+@media (max-width: 640px){
+	.nieruchomosci-grid-card{
+		width: 100%;
+	}
+}
