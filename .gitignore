@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Asari — raport audytu (regeneruje postbuild / npm run audit-asari)
+asari-audit-report.json
+asari-audit-report.md

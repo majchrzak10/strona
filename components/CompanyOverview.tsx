@@ -36,17 +36,17 @@ export default function CompanyOverview() {
 
       <div className="mt-2 sm:mt-4 lg:mt-6">
         <div
-          className="h-px bg-gradient-to-r from-transparent via-[#800020]/25 to-transparent"
+          className="h-px bg-gradient-to-r from-transparent via-brand-primary/25 to-transparent"
           aria-hidden
         />
         <div className="pt-12">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#800020]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">
             Nasze usługi
           </p>
-          <h3 className="mt-3 font-[var(--font-playfair)] text-xl font-bold text-[#800020] sm:text-2xl lg:text-3xl">
+          <h3 className="mt-3 font-[var(--font-playfair)] text-xl font-bold text-brand-primary sm:text-2xl lg:text-3xl">
             Nasze usługi — Sprawdź w jakich obszarach możemy Cię wspierać
           </h3>
-          <div className="mt-3 h-0.5 w-14 rounded bg-[#800020]" />
+          <div className="mt-3 h-0.5 w-14 rounded bg-brand-primary" />
         </div>
         <div className="mx-auto mt-10 grid max-w-[1400px] grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
           {[
@@ -56,7 +56,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -83,7 +83,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -109,7 +109,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -141,7 +141,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -168,7 +168,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -201,7 +201,7 @@ export default function CompanyOverview() {
               icon: (
                 <svg
                   aria-hidden="true"
-                  className="h-5 w-5 text-[#800020]"
+                  className="h-5 w-5 text-brand-primary"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -225,18 +225,18 @@ export default function CompanyOverview() {
           ].map((service) => (
             <article
               key={service.title}
-              className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-100 bg-[#800020]/[0.03] p-7 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:border-[#800020]/20 hover:bg-[#800020]/[0.06] hover:shadow-[0_10px_28px_rgba(128,0,32,0.09)]"
+              className="group relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-zinc-100 bg-brand-primary/[0.03] p-7 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-1 hover:border-brand-primary/20 hover:bg-brand-primary/[0.06] hover:shadow-[0_10px_28px_rgba(128,0,32,0.09)]"
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#800020]/10 transition-colors group-hover:bg-[#800020]/20">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-primary/10 transition-colors group-hover:bg-brand-primary/20">
                 {service.icon}
               </div>
-              <h4 className="mt-5 font-[var(--font-playfair)] text-lg font-bold text-[#800020]">
+              <h4 className="mt-5 font-[var(--font-playfair)] text-lg font-bold text-brand-primary">
                 {service.title}
               </h4>
               <p className="mt-3 min-h-0 flex-1 text-sm leading-relaxed text-zinc-600">
                 {service.desc}
               </p>
-              <div className="absolute bottom-0 left-0 h-0.5 w-0 rounded-b-xl bg-[#800020] transition-all duration-300 group-hover:w-full" />
+              <div className="absolute bottom-0 left-0 h-0.5 w-0 rounded-b-xl bg-brand-primary transition-all duration-300 group-hover:w-full" />
             </article>
           ))}
         </div>

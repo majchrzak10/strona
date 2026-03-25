@@ -1,11 +1,22 @@
 # =============================================================================
 # CyberFolks: build → rsync ./out/ przez SSH (port 222) — bez bugów sftp „put”.
 #
-# Sekrety: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
-# Opcja: SFTP_USE_KEY_AUTH=true + SSH_PRIVATE_KEY (+ opcjonalnie SSH_KEY_PASSPHRASE)
-# Port: zmienna SFTP_PORT lub 222 | Katalog: FTP_SERVER_DIR = jak w FileZilli (np. domains/domena.pl/public_html)
-# Jeśli masz zmienną FTP_SERVER_DIR=/public_html/ — usuń ją lub zmień na ścieżkę z FileZilli.
-# DEPLOY_METHOD=lftp — fallback FTP/FTPS
+# --- Wymagane sekrety (Settings → Secrets and variables → Actions) ---
+#   FTP_SERVER, FTP_USERNAME, FTP_PASSWORD — połączenie SSH/SFTP
+#   WEB3FORMS_ACCESS_KEY — formularz kontaktowy (ta sama wartość co w Web3Forms;
+#     trafia do NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY przy buildzie)
+#
+# --- Asari (oferty + zdjęcia) — opcjonalne ---
+#   • Domyślnie: folder asari-export/ w repozytorium (XML + foto/ w commicie).
+#   • Sekrety lub zmienne ASARI_DATA_DIR / ASARI_PHOTOS_DIR — gdy eksport jest poza repo
+#     albo chcesz nadpisać domyśl (vars.* wystarczy dla zwykłych ścieżek względnych).
+#   • Jeśli sekret jest pusty lub wskazuje nieistniejący katalog → używane jest
+#     $GITHUB_WORKSPACE/asari-export oraz …/foto.
+#   NEXT_PUBLIC_SITE_URL — opcjonalnie: np. https://bioredlab.pl (test); puste = https://dan-dom.pl
+#
+# --- Zmienne (Variables) ---
+#   FTP_SERVER_DIR — jak w FileZilli (np. domains/domena.pl/public_html), nie „/public_html/” zgadywane
+#   SFTP_PORT (domyślnie 222) | DEPLOY_METHOD=lftp — FTP/FTPS | SFTP_USE_KEY_AUTH + SSH_PRIVATE_KEY
 # =============================================================================
 
 name: Deploy — CyberFolks (SFTP)
@@ -54,9 +65,26 @@ jobs:
 
       - name: Build statyczny (out/)
         env:
-          ASARI_DATA_DIR: ${{ secrets.ASARI_DATA_DIR }}
-          ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR }}
-        run: npm run build
+          ASARI_DATA_DIR: ${{ secrets.ASARI_DATA_DIR || vars.ASARI_DATA_DIR }}
+          ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR || vars.ASARI_PHOTOS_DIR }}
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+          DEFAULT_ASARI="$GITHUB_WORKSPACE/asari-export"
+          if [ -z "${ASARI_DATA_DIR:-}" ] || [ ! -d "$ASARI_DATA_DIR" ]; then
+            export ASARI_DATA_DIR="$DEFAULT_ASARI"
+          fi
+          if [ -z "${ASARI_PHOTOS_DIR:-}" ] || [ ! -d "$ASARI_PHOTOS_DIR" ]; then
+            export ASARI_PHOTOS_DIR="$ASARI_DATA_DIR/foto"
+          fi
+          echo "Build: ASARI_DATA_DIR=$ASARI_DATA_DIR (XML)"
+          echo "Build: ASARI_PHOTOS_DIR=$ASARI_PHOTOS_DIR (zdjęcia → public/zdjecia)"
+          if [ ! -d "$ASARI_DATA_DIR" ]; then
+            echo "::warning::Brak folderu Asari — oferty będą puste. Dodaj commit asari-export/ lub ustaw sekret ASARI_DATA_DIR."
+          fi
+          echo "NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-<puste → domyślnie dan-dom.pl w kodzie>}"
+          npm run build
 
       - name: Wgranie na serwer (rsync + SSH, hasło)
         if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH != 'true' }}

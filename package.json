@@ -3,9 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "prebuild": "node scripts/copy-photos.mjs",
+    "dev": "next dev --webpack",
+    "dev:open": "concurrently \"next dev --webpack\" \"wait-on tcp:3000 && node scripts/open-preview.mjs\"",
+    "prebuild": "node scripts/generate-favicons.mjs && node scripts/copy-photos.mjs",
     "build": "next build",
+    "postbuild": "node scripts/inject-cache-meta.mjs && node scripts/verify-out.mjs && node scripts/audit-asari.mjs",
+    "audit-asari": "node scripts/audit-asari.mjs",
+    "build:staging": "cross-env NEXT_PUBLIC_SITE_URL=https://bioredlab.pl npm run build",
+    "build:prod": "cross-env NEXT_PUBLIC_SITE_URL=https://dan-dom.pl npm run build",
+    "generate-favicons": "node scripts/generate-favicons.mjs",
+    "verify-out": "node scripts/verify-out.mjs",
     "start": "next start",
     "lint": "eslint"
   },
@@ -13,7 +20,8 @@
     "fast-xml-parser": "^5.5.9",
     "next": "16.2.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,9 +29,15 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
+    "open": "^10.2.0",
     "eslint-config-next": "16.2.0",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "to-ico": "^1.1.5",
+    "typescript": "^5",
+    "wait-on": "^8.0.5"
   }
 }

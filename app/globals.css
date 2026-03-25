@@ -8,7 +8,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* Marka — głęboki burgund + hover (spójnie z tailwind.config.ts) */
   --color-burgundy: #800020;
+  --color-brand-burgundy: #800020;
+  --color-brand-primary: #800020;
+  --color-brand-hover: #5c0018;
   --font-sans: var(--font-inter);
   --font-mono: var(--font-inter);
 }
@@ -20,13 +24,38 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  overflow-x: clip;
   /* Zapobiega nagłemu powiększaniu tekstu na iOS przy obracaniu ekranu */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+}
+
+::selection {
+  background-color: #800020;
+  color: #fff;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #800020;
+}
+
+input[type="range"] {
+  accent-color: #800020;
 }
 
 /* Lepsze zachowanie przy długich słowach / URL w treściach */
@@ -36,4 +65,16 @@ body {
 .prose-lg {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+/* Delikatne wejście modułu kontaktu (motion-safe + reduced-motion w komponencie) */
+@keyframes contact-strip-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -2,15 +2,32 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ContactDetailsSection from "@/components/ContactDetailsSection";
-import AgentSidebarCard from "@/components/offers/AgentSidebarCard";
+import OfferDetailRail from "@/components/offers/OfferDetailRail";
 import PropertyGallery from "@/components/offers/PropertyGallery";
+import { relativeUrlForZdjeciaFile } from "@/lib/asari/imageUrl";
 import { loadAsariOffers } from "@/lib/asari/loadOffers";
-import { PLACEHOLDER_IMG } from "@/lib/asari/mapOffer";
+import { PLACEHOLDER_IMG } from "@/lib/asari/placeholderImg";
 import { photoNameFromApiUrl } from "@/lib/asari/photoUrl";
 import { canonicalUrl } from "@/lib/seo/site";
 import { notFound } from "next/navigation";
 
 const OG_FALLBACK_IMAGE = "/hero-biuro.jpg.png";
+
+/** Akapity z czystego tekstu — najpierw podwójny enter z XML, inaczej pojedyncze linie. */
+function splitDescriptionPlain(raw: string): string[] {
+  const t = raw.trim();
+  if (!t) return [];
+  if (/\n\n/.test(t)) {
+    return t
+      .split(/\n\n+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return t
+    .split(/\r?\n+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
 
 /** Gdy na CI nie ma XML Asari, lista ofert jest pusta. Next.js 16 + output:export wymaga >0 ścieżek, inaczej rzuca mylący błąd „missing generateStaticParams”. */
 const STATIC_EXPORT_EMPTY_SLUG = "__static_export_no_offers__";
@@ -79,23 +96,74 @@ export default async function OfertaSinglePage({ params }: Props) {
     gallerySorted.length > 0
       ? gallerySorted
       : fallbackName
-        ? [{ name: fallbackName, weight: 1 }]
+        ? [
+            {
+              name: fallbackName,
+              weight: 1,
+              src: relativeUrlForZdjeciaFile(fallbackName),
+            },
+          ]
         : [];
   const descriptionRaw = (o.descriptionHtml ?? "").trim();
   const descriptionHasHtml = /<\/?[a-z][\s\S]*>/i.test(descriptionRaw);
   const descriptionParagraphs = descriptionHasHtml
     ? []
-    : descriptionRaw
-        .split(/\r?\n+/)
-        .map((chunk) => chunk.trim())
-        .filter(Boolean);
+    : splitDescriptionPlain(descriptionRaw);
+
+  const galleryBlock =
+    imagesForGallery.length > 0 ? (
+      <PropertyGallery
+        images={imagesForGallery}
+        variant="detail"
+        heroClassName="max-w-none sm:max-w-none mx-0"
+      />
+    ) : (
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-200/80">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={o.mainImageSrc ?? PLACEHOLDER_IMG}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </div>
+    );
+
+  const descriptionBlock = descriptionRaw ? (
+    <section className="px-5 py-8 sm:px-8 sm:py-10 lg:px-10 lg:py-12">
+      <div className="mx-auto max-w-[min(100%,42rem)] lg:max-w-[min(100%,48rem)]">
+        <h2 className="font-[var(--font-playfair)] text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+          Opis nieruchomości
+        </h2>
+        <div className="mt-8">
+          {descriptionHasHtml ? (
+            <div
+              className="offer-description prose prose-sm prose-zinc max-w-none break-words text-zinc-800 prose-p:mb-4 prose-p:leading-[1.75] prose-headings:mb-2 prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-zinc-900 prose-headings:first:mt-0 prose-li:my-1 prose-a:font-medium prose-a:text-burgundy prose-a:underline sm:prose-base lg:prose-lg lg:prose-p:leading-[1.8]"
+              dangerouslySetInnerHTML={{ __html: descriptionRaw }}
+            />
+          ) : (
+            <div className="space-y-4 text-[0.95rem] leading-[1.75] text-zinc-800 sm:text-base sm:leading-[1.8] lg:text-[1.0625rem]">
+              {descriptionParagraphs.map((paragraph, i) => (
+                <p key={`${i}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section className="px-5 py-8 sm:px-8 lg:px-10">
+      <p className="mx-auto max-w-[min(100%,42rem)] text-sm text-zinc-500">
+        Brak opisu w eksporcie.
+      </p>
+    </section>
+  );
 
   return (
-    <div className="min-h-screen bg-[#f4f4f4] text-black">
+    <div className="min-h-screen bg-[#f0f0f0] text-black">
       <Navbar />
 
-      <main className="px-3 py-6 sm:px-6 sm:py-10 lg:px-10">
-        <div className="mx-auto w-full max-w-[1600px]">
+      <main className="px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl">
           <Link
             href="/oferty"
             className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline"
@@ -109,89 +177,25 @@ export default async function OfertaSinglePage({ params }: Props) {
             </p>
           ) : null}
 
-          <article className="mt-8 overflow-hidden rounded-2xl bg-white shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
-            <div className="border-b border-zinc-100 px-4 py-6 sm:px-8 sm:py-8 lg:px-12">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-burgundy">
-                {o.transaction} · {o.category}
-              </p>
-              <h1 className="mt-3 font-[var(--font-playfair)] text-3xl font-bold text-zinc-900 sm:text-4xl">
-                {o.title}
-              </h1>
-              <p className="mt-2 text-zinc-600">{o.locationLabel}</p>
-              <p className="mt-4 text-xl font-bold text-burgundy sm:text-2xl">
-                {o.priceLabel}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                <span className="text-zinc-600">
-                  <span className="font-medium text-zinc-800">
-                    Powierzchnia:
-                  </span>{" "}
-                  {o.areaLabel}
-                </span>
-                <span className="text-zinc-600">
-                  <span className="font-medium text-zinc-800">Pokoje:</span>{" "}
-                  {o.roomsLabel}
-                </span>
-                <span className="text-zinc-400">Nr oferty: {o.signature}</span>
+          <article className="mt-6 overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-[0_4px_28px_rgba(0,0,0,0.07)] sm:mt-8">
+            {/*
+              Blok 1: tylko galeria + jedna karta (OfferDetailRail). Bez sticky, bez row-span —
+              opis NIE jest w tym samym gridzie, więc nic „nie nachodzi”.
+            */}
+            <div className="flex flex-col lg:grid lg:grid-cols-12 lg:items-start lg:gap-0">
+              <div className="order-1 border-b border-zinc-200/80 px-4 py-5 sm:px-6 sm:py-6 lg:order-none lg:col-span-7 lg:border-b-0 lg:border-r lg:border-zinc-200 lg:px-8 lg:py-8">
+                {galleryBlock}
+              </div>
+              <div className="order-2 px-4 py-5 sm:px-6 sm:py-6 lg:order-none lg:col-span-5 lg:px-8 lg:py-8">
+                <OfferDetailRail offer={o} />
               </div>
             </div>
 
-            {imagesForGallery.length > 0 ? (
-              <PropertyGallery images={imagesForGallery} />
-            ) : (
-              <div className="flex justify-center bg-zinc-50 px-8 py-16">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={o.mainImageSrc ?? PLACEHOLDER_IMG}
-                  alt=""
-                  className="max-h-80 rounded-lg object-contain"
-                />
-              </div>
-            )}
-
-            <div className="lg:grid lg:grid-cols-[1fr_min(320px,36%)] lg:gap-10 lg:px-0">
-              <div>
-                {descriptionRaw ? (
-                  <section className="px-4 py-8 sm:px-8 sm:py-10 lg:px-12">
-                    <div className="max-w-3xl">
-                      <h3 className="font-[var(--font-playfair)] text-2xl font-semibold text-burgundy">
-                        Opis nieruchomości
-                      </h3>
-                      <hr className="my-6 border-zinc-200" />
-
-                      {descriptionHasHtml ? (
-                        <div
-                          className="prose prose-sm prose-zinc max-w-none break-words prose-a:font-medium prose-a:text-burgundy prose-a:underline sm:prose-base lg:prose-lg"
-                          dangerouslySetInnerHTML={{ __html: descriptionRaw }}
-                        />
-                      ) : (
-                        <div className="text-[1.05rem] leading-relaxed text-zinc-700 break-words">
-                          {descriptionParagraphs.map((paragraph) => (
-                            <p key={paragraph} className="mb-4 last:mb-0">
-                              {paragraph}
-                            </p>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </section>
-                ) : (
-                  <p className="px-6 py-10 text-zinc-500 sm:px-10 lg:px-12">
-                    Brak opisu w eksporcie.
-                  </p>
-                )}
-              </div>
-
-              <aside className="border-t border-zinc-100 px-4 py-7 sm:px-8 sm:py-8 lg:border-l lg:border-t-0 lg:px-8 lg:py-10">
-                <h2 className="mb-4 font-[var(--font-playfair)] text-lg font-semibold text-zinc-900">
-                  Kontakt
-                </h2>
-                <AgentSidebarCard offer={o} />
-              </aside>
-            </div>
+            {/* Blok 2: opis — osobna warstwa pod galerią i kartą, pełna szerokość karty */}
+            <div className="border-t border-zinc-200/80 bg-white">{descriptionBlock}</div>
           </article>
 
-          <section className="mt-20" aria-label="Kontakt i nasze dane">
+          <section className="mt-16 sm:mt-20" aria-label="Kontakt i nasze dane">
             <ContactDetailsSection />
           </section>
         </div>

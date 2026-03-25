@@ -10,8 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: canonicalUrl(""), lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: canonicalUrl("oferty"), lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: canonicalUrl("nieruchomosci/sprzedaz"), lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-    { url: canonicalUrl("nieruchomosci/wynajem"), lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: canonicalUrl("nieruchomosci"), lastModified: new Date(), changeFrequency: "daily", priority: 0.85 },
   ];
 
   const offerRoutes: MetadataRoute.Sitemap = offers.map((o) => ({

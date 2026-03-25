@@ -1,9 +1,15 @@
+import { existsSync } from "fs";
 import fs from "fs/promises";
 import path from "path";
 import { getAsariDataDir } from "./env";
-import type { AsariOfferDetail } from "./types";
-import { packageOffers, parsePackageXml } from "./parse";
 import { rawOfferToDetail } from "./mapOffer";
+import {
+  packageDeletedSignatures,
+  packageOffers,
+  parsePackageXml,
+} from "./parse";
+import { normalizeRawOffer } from "./schemas";
+import type { AsariOfferDetail } from "./types";
 
 /** Pliki paczek ofert Asari: końcówka _001.xml, bez definicji i bez CFG. */
 function isOfferPackageFile(name: string): boolean {
@@ -21,13 +27,34 @@ export type LoadAsariResult = {
 };
 
 export async function loadAsariOffers(): Promise<LoadAsariResult> {
+  try {
+    return await loadAsariOffersInner();
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return {
+      offers: [],
+      sourceFile: null,
+      error: `Błąd wczytywania ofert: ${msg}`,
+    };
+  }
+}
+
+async function loadAsariOffersInner(): Promise<LoadAsariResult> {
   const dir = getAsariDataDir();
   if (!dir) {
     return {
       offers: [],
       sourceFile: null,
       error:
-        "Brak ASARI_DATA_DIR. Ustaw w .env.local pełną ścieżkę do folderu z eksportem (XML + zdjęcia).",
+        "Brak ASARI_DATA_DIR. W pliku .env.local ustaw ścieżkę do folderu z eksportem Asari (definictions.xml + pliki *_001.xml), np. ASARI_DATA_DIR=asari-export — patrz folder asari-export/README.txt.",
+    };
+  }
+
+  if (!existsSync(dir)) {
+    return {
+      offers: [],
+      sourceFile: null,
+      error: `Folder ASARI_DATA_DIR nie istnieje: ${dir}. Popraw ścieżkę w .env.local (lub usuń błędną zmienną ASARI_DATA_DIR z ustawień systemu Windows). Możesz użyć ścieżki względnej względem projektu, np. asari-export.`,
     };
   }
 
@@ -38,7 +65,7 @@ export async function loadAsariOffers(): Promise<LoadAsariResult> {
     return {
       offers: [],
       sourceFile: null,
-      error: `Nie można odczytać katalogu Asari: ${dir}`,
+      error: `Nie można odczytać katalogu Asari: ${dir}. Sprawdź uprawnienia i czy to folder, nie plik.`,
     };
   }
 
@@ -80,13 +107,26 @@ export async function loadAsariOffers(): Promise<LoadAsariResult> {
       parseErrors++;
       continue;
     }
+    for (const sig of packageDeletedSignatures(root)) {
+      bySig.delete(sig);
+    }
+
     const rawList = packageOffers(root);
     let count = 0;
     for (const raw of rawList) {
-      const d = rawOfferToDetail(raw);
-      if (d) {
-        bySig.set(d.signature, d);
-        count++;
+      const normalized = normalizeRawOffer(raw);
+      if (!normalized) {
+        parseErrors++;
+        continue;
+      }
+      try {
+        const d = rawOfferToDetail(normalized);
+        if (d) {
+          bySig.set(d.signature, d);
+          count++;
+        }
+      } catch {
+        parseErrors++;
       }
     }
     if (count > 0) usedFiles.push(n);

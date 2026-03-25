@@ -1,0 +1,7 @@
+# Netlify / Cloudflare Pages — kopiowane do out/ przy `next build` (public/).
+# Apache używa public/.htaccess; ten plik jest ignorowany na typowym hostingu Apache.
+
+/nieruchomosci/sprzedaz    /nieruchomosci/?typ=sprzedaz    301
+/nieruchomosci/sprzedaz/   /nieruchomosci/?typ=sprzedaz    301
+/nieruchomosci/wynajem     /nieruchomosci/?typ=wynajem    301
+/nieruchomosci/wynajem/    /nieruchomosci/?typ=wynajem    301

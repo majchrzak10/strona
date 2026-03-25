@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<PACKAGE>
+  <DELETE>
+    <offers />
+    <pictures />
+  </DELETE>
+  <offer>
+    <signature>300/6093/ODS</signature>
+    <parameters>
+      <p id="1">300/6093/ODS</p>
+      <p id="2">Biuro Nieruchomości DAN-DOM</p>
+      <p id="3">2026-03-24 11:39:19.0705</p>
+      <p id="5">2026-03-12 12:25:03.0906</p>
+      <p id="10">580000.0000</p>
+      <p id="13">2900.0000</p>
+      <p id="20">WOLNO STOJĄCY</p>
+      <p id="23">ODDZIELNA</p>
+      <p id="26">AKTUALNA</p>
+      <p id="36">DOM</p>
+      <p id="39">KAN. MIEJSKA</p>
+      <p id="41">KOSTKA BRUKOWA</p>
+      <p id="43">SPRZEDAŻ</p>
+      <p id="45">WIELKOPOLSKIE</p>
+      <p id="46">OBORNICKI</p>
+      <p id="47">ROGOŹNO</p>
+      <p id="48">ROGOŹNO</p>
+      <p id="49"></p>
+      <p id="51">0.0000</p>
+      <p id="52">CENTRUM HANDLOWE, PLAC ZABAW</p>
+      <p id="53"></p>
+      <p id="54">PŁASKIE</p>
+      <p id="59"></p>
+      <p id="60">POLSKA</p>
+      <p id="61">1010.0000</p>
+      <p id="63">1.0000</p>
+      <p id="66">WŁASNOŚĆ</p>
+      <p id="71">1988</p>
+      <p id="77">PAPA</p>
+      <p id="78">PCV, Z ROLETAMI</p>
+      <p id="79">8.0000</p>
+      <p id="83">2.0000</p>
+      <p id="84">1.0000</p>
+      <p id="87">PIEC GAZOWY</p>
+      <p id="89">C.O. GAZOWE,C.O. WŁASNE,KOMINEK</p>
+      <p id="93">135314.0000</p>
+      <p id="94">155556.0000</p>
+      <p id="121">WŁASNOŚĆ</p>
+      <p id="128">200.0000</p>
+      <p id="141">PLN</p>
+      <p id="154"></p>
+      <p id="157"></p>
+      <p id="161">GARAŻ</p>
+      <p id="170">501-769-166</p>
+      <p id="171">dan-dom@wp.pl</p>
+      <p id="172">577</p>
+      <p id="174">34716.0000</p>
+      <p id="201"></p>
+      <p id="202"></p>
+      <p id="220">WTÓRNY</p>
+      <p id="300">Kwiatowa</p>
+      <p id="305">Danuta Majchrzak</p>
+      <p id="307">NIE</p>
+      <p id="340"></p>
+      <p id="341"></p>
+      <p id="342"></p>
+      <p id="343"></p>
+      <p id="344"></p>
+      <p id="345"></p>
+      <p id="489">TAK</p>
+      <p id="491">Dom z piękną działką</p>
+      <p id="492">NIE</p>
+    </parameters>
+    <pictures>
+      <picture>
+        <unique>111245945.jpg</unique>
+        <status>1</status>
+        <weight>1</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245946.jpg</unique>
+        <status>0</status>
+        <weight>2</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245947.jpg</unique>
+        <status>0</status>
+        <weight>3</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245948.jpg</unique>
+        <status>0</status>
+        <weight>4</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245950.jpg</unique>
+        <status>0</status>
+        <weight>5</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245951.jpg</unique>
+        <status>0</status>
+        <weight>6</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245952.jpg</unique>
+        <status>0</status>
+        <weight>7</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245953.jpg</unique>
+        <status>0</status>
+        <weight>8</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245955.jpg</unique>
+        <status>0</status>
+        <weight>9</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245956.jpg</unique>
+        <status>0</status>
+        <weight>10</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245957.jpg</unique>
+        <status>0</status>
+        <weight>11</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245959.jpg</unique>
+        <status>0</status>
+        <weight>12</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245960.jpg</unique>
+        <status>0</status>
+        <weight>13</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245961.jpg</unique>
+        <status>0</status>
+        <weight>14</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245962.jpg</unique>
+        <status>0</status>
+        <weight>15</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245963.jpg</unique>
+        <status>0</status>
+        <weight>16</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245964.jpg</unique>
+        <status>0</status>
+        <weight>17</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245965.jpg</unique>
+        <status>0</status>
+        <weight>18</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245966.jpg</unique>
+        <status>0</status>
+        <weight>19</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111245967.jpg</unique>
+        <status>0</status>
+        <weight>20</weight>
+        <description />
+      </picture>
+    </pictures>
+    <description>Polecamy Państwu na sprzedaż nieruchomość położoną przy ulicy Kwiatowej w Rogoźnie.&lt;br/&gt;&lt;br/&gt;Współpraca z nami - kupując tę nieruchomość, zyskujesz kompleksową opiekę prawną oraz pomoc w uzyskaniu finansowania.&lt;br/&gt;Informujemy, że usługa pośrednictwa jest płatna zgodnie z regulaminem biura. &lt;br/&gt;&lt;br/&gt; Nieruchomość stanowiąca działkę o powierzchni ok. 1.000 m2, zabudowana domem piętrowym o łącznej powierzchni ok. 200 m2.&lt;br/&gt; Na parterze budynku znajdują się: cztery pokoje, pralnia- która wstawiając sprzęt AGD może służyć jako kuchnia, łazienka z prysznicem, wc, korytarz oraz klatka schodowa. Jeden z pokoi z kominkiem, z rozprowadzeniem grawitacyjnym. W kolejnym pokoju duże okno widokowe, tworzące klimat ogrodu zimowego.&lt;br/&gt;Piętro budynku składa się z: czterech pokoi, kuchni, łazienki, korytarza oraz klatki schodowej. Dwa pokoje stanowiące salon z jadalnią- przechodnie, z wyjściem na duży balkon z widokiem na ogród.&lt;br/&gt;&lt;br/&gt;  Ogród urządzony z licznymi roślinami dekoracyjnymi i iglakami. Na posesji znajduje się parterowy budynek garażowo- gospodarczy o powierzchni ok. 35 m2. Za budynkiem dodatkowa przestrzeń- wiatka na przechowywanie drewna do kominka oraz śmieci. Teren posesji częściowo wyłożony kostką brukową.&lt;br/&gt;  Na każdej kondygnacji osobny dwufunkcyjny piec gazowy. Okna PCV, z roletami zewnętrznymi.&lt;br/&gt; &lt;br/&gt; Nieruchomość położona w bardzo dobrej lokalizacji. W pobliżu sklepy, market, plac zabaw, przystanek pkp.&lt;br/&gt; Dom idealnie nadaje się dla rodziny z dziećmi lub rodziny wielopokoleniowej.&lt;br/&gt; &lt;br/&gt; Osoba prowadząca ofertę: Joanna Szewczak  506-54-11-11, Danuta Majchrzak 501-769-166.&lt;br/&gt; &lt;br/&gt; Serdecznie zachęcamy do oglądania!&lt;br/&gt; W razie dodatkowych pytań służymy pomocą, również przy uzyskaniu kredytu na zakup.&lt;br/&gt; &lt;br/&gt; Zachęcamy do korzystania z naszego profilu na Facebook:&lt;br/&gt; https://www.facebook.com/biurodandom&lt;br/&gt;
+
+</description>
+  </offer>
+</PACKAGE>

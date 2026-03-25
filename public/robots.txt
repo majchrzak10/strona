@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://dan-dom.pl/sitemap.xml

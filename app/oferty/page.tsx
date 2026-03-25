@@ -28,7 +28,7 @@ export default async function OfertyPage() {
           <h1 className="mt-3 font-[var(--font-playfair)] text-2xl font-bold text-black sm:text-3xl lg:text-4xl">
             Oferty nieruchomości
           </h1>
-          <div className="mt-4 h-px w-28 bg-[#800020]/80" />
+          <div className="mt-4 h-px w-28 bg-brand-primary/80" />
 
           {error ? (
             <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -49,7 +49,7 @@ export default async function OfertyPage() {
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {offers.map((o) => (
-              <OfferCard key={o.signature} offer={toCard(o)} href={`/oferty/${o.slug}`} />
+              <OfferCard key={o.signature} offer={toCard(o)} href={`/oferty/${o.slug}/`} />
             ))}
           </div>
         </div>

@@ -1,22 +1,24 @@
 "use client";
 
+/* Galeria: portal + animacje oparte na stanie; sync setState w effect jest tu celowy. */
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
-type ImageItem = { name: string; weight: number };
+type ImageItem = { name: string; weight: number; src: string };
 
-function srcFor(name: string) {
-  return `/zdjecia/${encodeURIComponent(name)}`;
+function srcFor(im: ImageItem) {
+  return im.src;
 }
 
 const heroNavClass =
-  "absolute top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/95 text-burgundy shadow-md transition-colors duration-200 hover:border-burgundy hover:bg-burgundy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy touch-manipulation sm:h-13 sm:w-13";
+  "absolute top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/95 text-brand-primary shadow-md transition-colors duration-200 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary touch-manipulation sm:h-12 sm:w-12";
 
 const lightboxNavBtnClass =
-  "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-white text-burgundy shadow-lg transition-colors duration-200 hover:border-burgundy hover:bg-burgundy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy touch-manipulation";
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-zinc-200 bg-white text-brand-primary shadow-lg transition-colors duration-200 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary touch-manipulation";
 
 const closeBtnClass =
-  "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-white bg-white text-burgundy shadow-lg transition-colors duration-200 hover:border-burgundy hover:bg-burgundy hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy touch-manipulation";
+  "flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-white bg-white text-brand-primary shadow-lg transition-colors duration-200 hover:border-brand-primary hover:bg-brand-primary hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary touch-manipulation";
 
 type LightboxProps = {
   images: ImageItem[];
@@ -179,7 +181,7 @@ function Lightbox({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={item.name}
-            src={srcFor(item.name)}
+            src={srcFor(item)}
             alt=""
             className={`max-h-[min(78vh,100%)] max-w-full object-contain transition-transform duration-300 ease-out ${
               imgIn ? "scale-100" : "scale-95"
@@ -200,9 +202,20 @@ function Lightbox({
 
 type Props = {
   images: ImageItem[];
+  /**
+   * `detail` — strona oferty: jedno główne zdjęcie + miniatury, proporcje 4:3.
+   * `carousel` — pełna szerokość 16:9 (inne miejsca).
+   */
+  variant?: "detail" | "carousel";
+  /** Np. `max-w-none` gdy galeria ma wypełnić kolumnę siatki 50/50. */
+  heroClassName?: string;
 };
 
-export default function PropertyGallery({ images }: Props) {
+export default function PropertyGallery({
+  images,
+  variant = "carousel",
+  heroClassName = "",
+}: Props) {
   const sorted = [...images].sort((a, b) => a.weight - b.weight);
   const n = sorted.length;
   const [heroIndex, setHeroIndex] = useState(0);
@@ -244,6 +257,131 @@ export default function PropertyGallery({ images }: Props) {
 
   const showHeroNav = n > 1;
   const slidePct = 100 / n;
+  const current = sorted[heroIndex];
+  if (!current) return null;
+
+  const isDetail = variant === "detail";
+
+  if (isDetail) {
+    return (
+      <>
+        <div className="w-full">
+          <div
+            className={`relative mx-auto aspect-[4/3] w-full max-w-2xl overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-200/80 sm:max-w-3xl ${heroClassName}`.trim()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={current.name}
+              src={srcFor(current)}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+            <button
+              type="button"
+              className="absolute inset-0 z-10 cursor-zoom-in bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
+              onClick={() => openAt(heroIndex)}
+              aria-label="Powiększ zdjęcie"
+            />
+            {showHeroNav ? (
+              <>
+                <button
+                  type="button"
+                  className={`${heroNavClass} left-2 sm:left-3`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goPrevHero();
+                  }}
+                  aria-label="Poprzednie zdjęcie"
+                >
+                  <svg
+                    className="h-5 w-5 sm:h-6 sm:w-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden
+                  >
+                    <path
+                      d="M14 6l-6 6 6 6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className={`${heroNavClass} right-2 sm:right-3`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goNextHero();
+                  }}
+                  aria-label="Następne zdjęcie"
+                >
+                  <svg
+                    className="h-5 w-5 sm:h-6 sm:w-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden
+                  >
+                    <path
+                      d="M10 6l6 6-6 6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                <div className="pointer-events-none absolute bottom-2 left-1/2 z-20 flex -translate-x-1/2 gap-1 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-medium text-white">
+                  {heroIndex + 1} / {n}
+                </div>
+              </>
+            ) : null}
+          </div>
+
+          {n > 1 ? (
+            <div
+              className="mt-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mt-4"
+              role="tablist"
+              aria-label="Miniatury zdjęć"
+            >
+              {sorted.map((im, i) => (
+                <button
+                  key={im.name}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === heroIndex}
+                  onClick={() => setHeroIndex(i)}
+                  className={`relative h-14 w-[4.5rem] shrink-0 overflow-hidden rounded-lg ring-2 transition-shadow sm:h-16 sm:w-20 ${
+                    i === heroIndex
+                      ? "ring-brand-primary shadow-md"
+                      : "ring-transparent opacity-80 hover:opacity-100"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={srcFor(im)}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        {openIndex !== null ? (
+          <Lightbox
+            images={sorted}
+            index={openIndex}
+            onClose={close}
+            onPrev={goPrevLightbox}
+            onNext={goNextLightbox}
+          />
+        ) : null}
+      </>
+    );
+  }
 
   return (
     <>
@@ -263,7 +401,7 @@ export default function PropertyGallery({ images }: Props) {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={srcFor(im.name)}
+                src={srcFor(im)}
                 alt=""
                 className="h-full w-full object-cover"
               />
@@ -273,7 +411,7 @@ export default function PropertyGallery({ images }: Props) {
 
         <button
           type="button"
-          className="absolute inset-0 z-10 cursor-zoom-in bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-burgundy"
+          className="absolute inset-0 z-10 cursor-zoom-in bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
           onClick={() => openAt(heroIndex)}
           aria-label="Powiększ zdjęcie"
         />

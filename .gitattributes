@@ -1,0 +1,6 @@
+# Spójne końce linii między Mac / Linux / Windows (LF w repozytorium).
+* text=auto eol=lf
+
+# Skrypty Windows — CRLF jest naturalny dla cmd/PowerShell.
+*.bat text eol=crlf
+*.cmd text eol=crlf

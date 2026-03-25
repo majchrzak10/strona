@@ -90,3 +90,26 @@ export function packageOffers(root: unknown): unknown[] {
   if (o == null) return [];
   return Array.isArray(o) ? o : [o];
 }
+
+/**
+ * Sygnatury ofert do usunięcia z listy (wycofanie w Asari) — sekcja PACKAGE/DELETE/offers/signature.
+ * Może być jedna lub wiele; fast-xml-parser zwraca string | tablicę stringów lub obiekty z #text.
+ */
+export function packageDeletedSignatures(root: unknown): string[] {
+  const offers = (root as { PACKAGE?: { DELETE?: { offers?: unknown } } })?.PACKAGE
+    ?.DELETE?.offers;
+  if (offers == null || typeof offers !== "object") return [];
+  const sigRaw = (offers as { signature?: unknown }).signature;
+  if (sigRaw == null) return [];
+  const list = Array.isArray(sigRaw) ? sigRaw : [sigRaw];
+  const out: string[] = [];
+  for (const item of list) {
+    const s =
+      typeof item === "string" || typeof item === "number"
+        ? String(item)
+        : textField(item);
+    const t = s.trim();
+    if (t) out.push(t);
+  }
+  return out;
+}

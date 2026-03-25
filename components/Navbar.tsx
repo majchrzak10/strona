@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 const NAV_LINKS = [
   { href: "/", label: "Strona główna" },
@@ -10,20 +11,23 @@ const NAV_LINKS = [
 ];
 
 const PROPERTY_LINKS = [
-  { href: "/nieruchomosci/sprzedaz", label: "Sprzedaż" },
-  { href: "/nieruchomosci/wynajem", label: "Wynajem" },
+  { href: "/nieruchomosci/?typ=sprzedaz", label: "Sprzedaż" },
+  { href: "/nieruchomosci/?typ=wynajem", label: "Wynajem" },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  /** Tylko desktop — dropdown „Nieruchomości” */
+  const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
+  /** Tylko mobile drawer — rozwinięcie pod „Nieruchomości” (osobny stan = brak konfliktu z desktopem) */
+  const [mobilePropertyOpen, setMobilePropertyOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
+        setDesktopDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleOutsideClick);
@@ -36,12 +40,21 @@ export default function Navbar() {
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [mobileOpen]);
+
+  /** Po zmianie trasy zamykaj drawer i akordeon (Next nie zawsze odpala klik na Link na mobile). */
+  useEffect(() => {
+    setMobileOpen(false);
+    setMobilePropertyOpen(false);
+  }, [pathname]);
 
   function closeMobile() {
     setMobileOpen(false);
-    setDropdownOpen(false);
+    setMobilePropertyOpen(false);
+    setDesktopDropdownOpen(false);
   }
 
   return (
@@ -49,8 +62,6 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 bg-neutral-50 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_0_rgba(0,0,0,0.06)]">
         <div className="mx-auto w-full max-w-[1600px] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-6 lg:px-8">
           <div className="flex h-[4.25rem] items-center justify-between sm:h-[4.5rem]">
-
-            {/* Logo */}
             <Link
               href="/"
               aria-label="Strona główna Dan-Dom Biuro Obrotu Nieruchomościami"
@@ -61,12 +72,12 @@ export default function Navbar() {
                 alt="Dan-Dom Biuro Obrotu Nieruchomościami — logo firmy"
                 width={280}
                 height={112}
-                className="h-11 w-auto object-contain sm:h-[3.25rem] lg:h-14"
+                sizes="(max-width: 768px) 200px, 280px"
+                className="h-11 w-auto max-w-[min(72vw,280px)] object-contain sm:h-[3.25rem] lg:h-14"
                 priority
               />
             </Link>
 
-            {/* Desktop nav */}
             <nav className="hidden items-center gap-9 md:flex lg:gap-10">
               {NAV_LINKS.map((l) => (
                 <Link
@@ -78,19 +89,18 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* Dropdown — Nieruchomości */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
-                  aria-expanded={dropdownOpen}
+                  aria-expanded={desktopDropdownOpen}
                   aria-haspopup="true"
-                  onClick={() => setDropdownOpen((v) => !v)}
-                  className="inline-flex items-center gap-2 text-base font-semibold text-black/80 transition-colors hover:text-black"
+                  onClick={() => setDesktopDropdownOpen((v) => !v)}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-base font-semibold text-black/80 transition-colors hover:text-black"
                 >
                   Nieruchomości
                   <svg
                     aria-hidden="true"
-                    className={`h-5 w-5 text-[#A32036] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                    className={`h-5 w-5 text-brand-primary transition-transform duration-200 ${desktopDropdownOpen ? "rotate-180" : ""}`}
                     viewBox="0 0 24 24"
                     fill="none"
                   >
@@ -98,7 +108,7 @@ export default function Navbar() {
                   </svg>
                 </button>
 
-                {dropdownOpen && (
+                {desktopDropdownOpen && (
                   <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3">
                     <div className="min-w-[180px] overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
                       {PROPERTY_LINKS.map((l, i) => (
@@ -106,8 +116,8 @@ export default function Navbar() {
                           {i > 0 && <div className="mx-4 h-px bg-zinc-100" />}
                           <Link
                             href={l.href}
-                            onClick={() => setDropdownOpen(false)}
-                            className="flex items-center gap-2 px-4 py-3.5 text-[0.95rem] font-medium text-zinc-700 transition-colors hover:bg-[#800020]/5 hover:text-[#800020]"
+                            onClick={() => setDesktopDropdownOpen(false)}
+                            className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-[0.95rem] font-medium text-zinc-700 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
                           >
                             {l.label}
                           </Link>
@@ -119,11 +129,10 @@ export default function Navbar() {
               </div>
             </nav>
 
-            {/* Desktop CTA */}
             <div className="hidden md:flex">
               <Link
                 href="/#kontakt"
-                className="inline-flex items-center gap-2 rounded-full bg-[#A32036] px-7 py-3 text-base font-semibold text-white shadow-sm transition-all hover:brightness-90"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-brand-primary px-7 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-hover"
               >
                 Kontakt
                 <svg aria-hidden="true" className="h-[1.1rem] w-[1.1rem]" viewBox="0 0 24 24" fill="none">
@@ -133,12 +142,11 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Mobile right side: CTA + hamburger */}
             <div className="flex items-center gap-2 md:hidden">
               <Link
                 href="/#kontakt"
                 onClick={closeMobile}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#A32036] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:brightness-90"
+                className="inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-hover"
               >
                 Kontakt
               </Link>
@@ -160,35 +168,33 @@ export default function Navbar() {
                 )}
               </button>
             </div>
-
           </div>
         </div>
       </header>
 
-      {/* Mobile drawer overlay */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+          className="fixed inset-0 z-[100] bg-black/40 md:hidden"
           aria-hidden="true"
           onClick={closeMobile}
         />
       )}
 
-      {/* Mobile drawer panel */}
       <div
-        ref={mobileMenuRef}
-        className={`fixed inset-y-0 right-0 z-50 w-72 max-w-[85vw] transform bg-white pb-[env(safe-area-inset-bottom,0px)] pt-[env(safe-area-inset-top,0px)] shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
-          mobileOpen ? "translate-x-0" : "translate-x-full"
+        className={`fixed inset-y-0 right-0 z-[110] flex w-72 max-w-[85vw] flex-col bg-white pb-[env(safe-area-inset-bottom,0px)] pt-[env(safe-area-inset-top,0px)] shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
+          mobileOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
         }`}
+        aria-hidden={!mobileOpen}
         aria-label="Menu nawigacyjne"
+        id="mobile-nav-drawer"
       >
-        <div className="flex h-[4.25rem] items-center justify-between border-b border-zinc-100 px-5">
+        <div className="flex h-[4.25rem] shrink-0 items-center justify-between border-b border-zinc-100 px-5">
           <span className="text-base font-semibold text-zinc-700">Menu</span>
           <button
             type="button"
             aria-label="Zamknij menu"
             onClick={closeMobile}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100"
+            className="flex h-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-100"
           >
             <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24" fill="none">
               <path d="M6 6l12 12M6 18L18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -196,30 +202,30 @@ export default function Navbar() {
           </button>
         </div>
 
-        <nav className="flex flex-col px-4 py-4">
+        <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 py-4">
           {NAV_LINKS.map((l) => (
             <Link
               key={l.href}
               href={l.href}
               onClick={closeMobile}
-              className="flex items-center rounded-lg px-3 py-4 text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-[#800020]"
+              className="flex min-h-[44px] items-center rounded-lg px-3 py-3 text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
             >
               {l.label}
             </Link>
           ))}
 
-          {/* Accordion — Nieruchomości */}
-          <div className="mt-1">
+          <div className="mt-1 border-t border-transparent">
             <button
               type="button"
-              aria-expanded={dropdownOpen}
-              onClick={() => setDropdownOpen((v) => !v)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-4 text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-[#800020]"
+              aria-expanded={mobilePropertyOpen}
+              aria-controls="mobile-property-submenu"
+              onClick={() => setMobilePropertyOpen((v) => !v)}
+              className="flex min-h-[48px] w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
             >
               Nieruchomości
               <svg
                 aria-hidden="true"
-                className={`h-5 w-5 text-[#A32036] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                className={`h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 ${mobilePropertyOpen ? "rotate-180" : ""}`}
                 viewBox="0 0 24 24"
                 fill="none"
               >
@@ -227,30 +233,33 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {dropdownOpen && (
-              <div className="ml-3 mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
-                {PROPERTY_LINKS.map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    onClick={closeMobile}
-                    className="flex items-center px-4 py-3.5 text-[0.95rem] font-medium text-zinc-700 transition-colors hover:bg-[#800020]/5 hover:text-[#800020]"
-                  >
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <div
+              id="mobile-property-submenu"
+              className={`${mobilePropertyOpen ? "block" : "hidden"} relative z-10 mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50`}
+            >
+              {PROPERTY_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  prefetch
+                  scroll
+                  onClick={closeMobile}
+                  className="flex min-h-[48px] items-center px-4 py-3 text-[0.95rem] font-medium text-zinc-800 transition-colors hover:bg-brand-primary/10 hover:text-brand-primary active:bg-brand-primary/15"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-6 border-t border-zinc-100 pt-6">
+          <div className="mt-auto border-t border-zinc-100 pt-6">
             <Link
               href="/#kontakt"
               onClick={closeMobile}
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#A32036] px-6 py-4 text-base font-semibold text-white shadow-sm transition-all hover:brightness-90"
+              className="flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-brand-primary px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-hover"
             >
               Skontaktuj się z nami
-              <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24" fill="none">
+              <svg aria-hidden="true" className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12h13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 <path d="M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

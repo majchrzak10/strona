@@ -20,6 +20,9 @@ const defaultTitle = "Dan-Dom Nieruchomości — Wągrowiec i Rogoźno";
 const defaultDescription =
   "Biuro nieruchomości z ponad 28-letnim doświadczeniem. Kompleksowa obsługa sprzedaży, zakupu i wynajmu nieruchomości w Wągrowcu i Rogoźnie.";
 
+/** Kolor motywu PWA / meta — spójny z `--color-brand-primary` w `globals.css`. */
+const BRAND_THEME_COLOR = "#800020";
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -51,6 +54,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  /**
+   * Ikony: konwencja plików w `app/` (`icon.png`, `icon.svg`, `apple-icon.png`, `favicon.ico`).
+   * Next.js sam dodaje odpowiednie `<link rel="icon" | "apple-touch-icon">` przy buildzie.
+   * Regeneracja: `npm run generate-favicons` (źródło: `public/icon.svg` lub `public/brand/*`).
+   */
 };
 
 /** Poprawne skalowanie na telefonach + notch / home indicator (iOS). */
@@ -59,6 +67,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   viewportFit: "cover",
+  themeColor: BRAND_THEME_COLOR,
 };
 
 export default function RootLayout({
@@ -69,7 +78,7 @@ export default function RootLayout({
   return (
     <html
       lang="pl"
-      className={`${inter.variable} ${playfair.variable} h-full scroll-smooth antialiased`}
+      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col overflow-x-hidden bg-white text-black">
         <script
