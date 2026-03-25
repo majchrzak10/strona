@@ -1,0 +1,35 @@
+name: 🚀 Deploy to Cyberfolks
+
+# Skrypt uruchomi się automatycznie przy każdym 'Push' do głównej gałęzi
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Pobieranie kodu z repozytorium
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Konfiguracja środowiska Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Instalacja zależności
+        run: npm install
+
+      - name: 🏗️ Budowanie statycznej wersji produkcyjnej (SSG)
+        run: npm run build
+
+      - name: 🚀 Wgrywanie plików na serwer Cyberfolks (FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./out/
+          server-dir: /public_html/
