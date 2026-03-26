@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* Tailwind v4: plugin musi być tu — inaczej `prose` nie generuje stylów (oferty / opisy HTML). */
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #f4f4f4;

@@ -16,6 +16,11 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+**Jeśli nie widzisz strony:** użyj adresu **http://localhost:3000/** lub **http://127.0.0.1:3000/** w zwykłej przeglądarce (Chrome, Safari, Firefox). W Cursor: *Command Palette* → *Simple Browser: Show* → wklej ten URL. Nie otwieraj plików z folderu `out/` przez `file://` — bez serwera HTTP routing nie zadziała.
+
+- `npm run dev:open` — uruchamia dev i próbuje otworzyć przeglądarkę; w terminalu zobaczysz też wypisany URL.
+- Po `npm run build` podgląd statycznego eksportu: `npm run serve:out` → **http://localhost:4173/**
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

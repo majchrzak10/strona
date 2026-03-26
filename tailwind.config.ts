@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import typography from "@tailwindcss/typography";
 
 /** Głęboki burgund marki (oryginalny) + hover ~12% ciemniej — spójne z `globals.css` */
 const BRAND_BURGUNDY = "#800020";
@@ -19,5 +18,4 @@ export default {
       },
     },
   },
-  plugins: [typography],
 } satisfies Config;
