@@ -15,9 +15,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 RewriteRule ^nieruchomosci/sprzedaz/?$ /nieruchomosci/?typ=sprzedaz [R=301,L,QSA]
 RewriteRule ^nieruchomosci/wynajem/?$ /nieruchomosci/?typ=wynajem [R=301,L,QSA]
 
-# --- www → bez www (lub odwrotnie — wybierz jedno) ----------
-# RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-# RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+# --- www → bez www ------------------------------------------
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
 # --- Obsługa tras Next.js (trailingSlash: true) --------------
 # Przekieruj /oferty do /oferty/ (jeśli brak slash)
@@ -63,9 +63,16 @@ ErrorDocument 404 /404/index.html
   AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
 </IfModule>
 
-# --- Bezpieczeństwo ------------------------------------------
+# --- Bezpieczeństwo (nagłówki HTTP) --------------------------
+# Przy `output: export` obowiązuje serwer (Apache), nie next.config — patrz też komentarz w next.config.ts.
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
-  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Frame-Options "DENY"
+  Header always set X-XSS-Protection "1; mode=block"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  # HSTS tylko po HTTPS
+  Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+  # Statyczny Next + Web3Forms + GA4 (gtag) + obrazy https:. Przy problemach z zasobami — tymczasowo zakomentuj CSP.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://api.web3forms.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://www.googletagmanager.com; manifest-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; upgrade-insecure-requests"
 </IfModule>

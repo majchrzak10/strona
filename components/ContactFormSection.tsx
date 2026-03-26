@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import {
+  isContactFormRateLimitOk,
+  recordContactFormSubmit,
+} from "@/lib/client/contactFormRateLimit";
 import { SITE_URL } from "@/lib/seo/site";
+import { contactFormSchema } from "@/lib/validation/contactForm";
 
 const labelClass = "mb-0.5 block text-[11px] font-semibold uppercase tracking-wide text-zinc-500";
 
@@ -53,11 +58,30 @@ export default function ContactFormSection() {
       return;
     }
 
-    const fromName = fullNameFromParts(form.firstName, form.lastName);
-    if (!fromName) {
-      setError("Podaj imię i nazwisko.");
+    const parsed = contactFormSchema.safeParse(form);
+    if (!parsed.success) {
+      const first = parsed.error.flatten().fieldErrors;
+      const msg =
+        first.firstName?.[0] ??
+        first.lastName?.[0] ??
+        first.email?.[0] ??
+        first.phone?.[0] ??
+        first.message?.[0] ??
+        "Sprawdź poprawność pól.";
+      setError(msg);
       return;
     }
+
+    const data = parsed.data;
+
+    if (!isContactFormRateLimitOk()) {
+      setError(
+        "Zbyt wiele wysyłek z tej przeglądarki. Spróbuj ponownie za kilkanaście minut lub napisz na biuro@dan-dom.pl.",
+      );
+      return;
+    }
+
+    const fromName = fullNameFromParts(data.firstName, data.lastName);
 
     setIsSubmitting(true);
     try {
@@ -65,9 +89,9 @@ export default function ContactFormSection() {
         access_key: accessKey,
         subject: `Zapytanie ze strony ${new URL(SITE_URL).hostname} — ${fromName}`,
         from_name: fromName,
-        email: form.email,
-        phone: form.phone,
-        message: form.message,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
         botcheck: "",
       };
       const res = await fetch("https://api.web3forms.com/submit", {
@@ -75,14 +99,15 @@ export default function ContactFormSection() {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = (await res.json().catch(() => ({}))) as {
+      const jsonBody = (await res.json().catch(() => ({}))) as {
         success?: boolean;
         message?: string;
       };
-      if (!res.ok || !data.success) {
-        setError(data.message ?? "Wystąpił błąd. Spróbuj ponownie.");
+      if (!res.ok || !jsonBody.success) {
+        setError(jsonBody.message ?? "Wystąpił błąd. Spróbuj ponownie.");
         return;
       }
+      recordContactFormSubmit();
       setIsSuccess(true);
       setForm({ firstName: "", lastName: "", email: "", phone: "", message: "" });
     } catch {

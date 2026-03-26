@@ -13,24 +13,19 @@ export default function CompanyOverview() {
             "linear-gradient(180deg, #2F0811 0%, #4A0D1A 24%, #6B1226 48%, #8B1832 64%, #A64C61 76%, #D7B8C2 90%, #FFFFFF 100%)",
         }}
       >
-        <div className="mx-auto max-w-2xl text-center">
-          <div>
-            <h2 className="mb-5 mt-0 font-[var(--font-playfair)] text-lg font-semibold leading-tight text-white sm:text-xl lg:text-2xl">
-              O biurze — Kim jesteśmy
-            </h2>
-            <div className="mx-auto h-0.5 w-12 rounded bg-white/40" />
-          </div>
-          <div className="mt-5">
-            <p className="font-[var(--font-inter)] text-sm font-normal leading-relaxed text-rose-50/90">
-              Od ponad 28 lat specjalizujemy się w kompleksowej obsłudze rynku nieruchomości.
-              Łączymy bogatą bazę ofert z profesjonalnym doradztwem w zakresie negocjacji,
-              sporządzania umów oraz wycen. Doskonale znamy lokalny rynek, co pozwala nam działać
-              szybko i skutecznie. Jesteśmy z Tobą od pierwszej prezentacji aż po przekazanie kluczy.
-              Dzięki sprawdzonej współpracy z doradcą kredytowym, agencją ubezpieczeniową i kancelarią
-              notarialną, zdejmujemy z Twoich barków ciężar formalności. Oferujemy rozwiązania, które
-              przyspieszają transakcje, minimalizują koszty i gwarantują 100% bezpieczeństwa prawnego.
-            </p>
-          </div>
+        <div className="mx-auto w-full max-w-4xl text-center font-sans">
+          <h2 className="mt-0 font-[var(--font-playfair)] text-lg font-semibold leading-tight text-white sm:text-xl lg:text-2xl">
+            O biurze — Kim jesteśmy
+          </h2>
+          <p className="mt-6 text-[1.125rem] font-normal leading-[1.75] tracking-[0.02em] text-rose-50/90 sm:mt-8">
+            Od ponad 28 lat specjalizujemy się w kompleksowej obsłudze rynku nieruchomości.
+            Łączymy bogatą bazę ofert z profesjonalnym doradztwem w zakresie negocjacji,
+            sporządzania umów oraz wycen. Doskonale znamy lokalny rynek, co pozwala nam działać
+            szybko i skutecznie. Jesteśmy z Tobą od pierwszej prezentacji aż po przekazaniu kluczy.
+            Dzięki sprawdzonej współpracy z doradcą kredytowym, agencją ubezpieczeniową i kancelarią
+            notarialną, zdejmujemy z Twoich barków ciężar formalności. Oferujemy rozwiązania, które
+            przyspieszają transakcje, minimalizują koszty i gwarantują 100% bezpieczeństwa prawnego.
+          </p>
         </div>
       </div>
 

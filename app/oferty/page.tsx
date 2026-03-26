@@ -22,7 +22,7 @@ export default async function OfertyPage() {
 
       <main className="px-4 py-10 sm:px-6 lg:px-10">
         <div className="mx-auto w-full max-w-[1600px] rounded-2xl bg-white px-5 py-10 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:px-10 sm:py-14 lg:px-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-600">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary">
             Biuro Dan-Dom
           </p>
           <h1 className="mt-3 font-[var(--font-playfair)] text-2xl font-bold text-black sm:text-3xl lg:text-4xl">

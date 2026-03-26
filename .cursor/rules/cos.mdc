@@ -1,0 +1,33 @@
+---
+description: Zasady pracy nad projektem Dan-Dom (Next.js, statyczny export, Apache)
+alwaysApply: true
+---
+
+# Dan-Dom — zasady dla asystenta
+
+## Projekt
+
+- Next.js App Router, **`output: "export"`** — deploy z folderu **`out/`** na Apache (Cyber-Folks). Nagłówki (CSP, HSTS) w **`public/.htaccess`**; po buildzie lądują w **`out/.htaccess`**.
+- Kanoniczny URL: **`https://dan-dom.pl`** — przy buildzie produkcyjnym ustawiaj **`NEXT_PUBLIC_SITE_URL`** zgodnie z domeną (patrz `.env.example`).
+- Nie zakładaj „klasycznego” Next bez sprawdzenia — czytaj **`AGENTS.md`** / `next.config.ts` przy wątpliwościach.
+
+## Zakres zmian
+
+- Zmieniaj tylko to, o co proszę; unikaj refaktorów „przy okazji” i plików niezwiązanych z zadaniem.
+- Nie dodawaj dokumentacji markdown ani README, jeśli użytkownik o to nie poprosił.
+
+## Bezpieczeństwo i zgodność
+
+- **CSP** jest na serwerze — nowe skrypty/domeny zewnętrzne wymagają aktualizacji **`public/.htaccess`** (nie tylko kodu w React).
+- **Google Analytics** ładuje się po zgodzie (**`CookieConsentRoot`**); nie włączaj GA bez ścieżki zgody.
+- Nie commituj sekretów; wzorce w **`.env.example`**.
+
+## Styl
+
+- UI spójny z istniejącymi komponentami (Tailwind, **`brand-primary`**, **`font-playfair`** tam gdzie już używane).
+- Komunikaty do użytkownika po polsku; identyfikatory w kodzie po angielsku, jak w reszcie repo.
+
+## Jakość
+
+- Po istotnych zmianach uruchom **`npm run build`** i napraw błędy.
+- Dopasuj się do stylu importów i typów już obecnych w plikach, które edytujesz.

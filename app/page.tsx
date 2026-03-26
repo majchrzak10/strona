@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import ClientReviewsSection from "@/components/ClientReviewsSection";
 import CompanyOverview from "@/components/CompanyOverview";
 import ContactFormWithBoundary from "@/components/ContactFormWithBoundary";
+import FooterLegalLinks from "@/components/FooterLegalLinks";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import RecentOffersSection from "@/components/RecentOffersSection";
@@ -119,7 +120,7 @@ export default function Home() {
               SEKCJA 4 — NASZE BIURA (ostatni blok przed stopką)
           ─────────────────────────────────────────────────── */}
           <section id="nasze-biura" className="mx-auto w-full max-w-[1600px] rounded-2xl bg-white px-5 py-7 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:px-10 sm:py-10 lg:px-14 lg:py-12">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-red-600">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-primary">
               Odwiedź nas
             </p>
             <h2 className="mt-3 font-[var(--font-playfair)] text-2xl font-bold text-black sm:text-3xl lg:text-4xl">
@@ -303,10 +304,13 @@ export default function Home() {
             </div>
 
             {/* ── copyright bar ── */}
-            <div className="border-t border-white/10 py-4 text-center text-xs text-white/35">
-              Copyright ©{" "}
-              <span suppressHydrationWarning>{new Date().getFullYear()}</span> Dan-Dom Nieruchomości.
-              Wszelkie prawa zastrzeżone.
+            <div className="border-t border-white/10 py-4 text-xs text-white/35">
+              <FooterLegalLinks />
+              <p className="mt-3 text-center">
+                Copyright ©{" "}
+                <span suppressHydrationWarning>{new Date().getFullYear()}</span> Dan-Dom Nieruchomości.
+                Wszelkie prawa zastrzeżone.
+              </p>
             </div>
           </footer>
 

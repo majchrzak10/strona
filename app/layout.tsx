@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import CookieConsentRoot from "@/components/CookieConsentRoot";
 import { Inter, Playfair_Display } from "next/font/google";
 import { organizationJsonLd } from "@/lib/seo/organizationJsonLd";
-import { canonicalUrl, SITE_URL } from "@/lib/seo/site";
+import { canonicalUrl, SITE_INDEXABLE, SITE_URL } from "@/lib/seo/site";
+import { faviconUrl } from "@/lib/seo/favicon";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,6 +25,9 @@ const defaultDescription =
 /** Kolor motywu PWA / meta — spójny z `--color-brand-primary` w `globals.css`. */
 const BRAND_THEME_COLOR = "#800020";
 
+/** GA4 — tylko przy ustawionym `NEXT_PUBLIC_GA_MEASUREMENT_ID` (np. `.env.local` / CI). */
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
@@ -40,6 +45,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/hero-biuro.jpg.png",
+        width: 1200,
+        height: 800,
         alt: "Zespół Dan-Dom Nieruchomości",
       },
     ],
@@ -50,15 +57,31 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: ["/hero-biuro.jpg.png"],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: SITE_INDEXABLE
+    ? { index: true, follow: true }
+    : { index: false, follow: true },
   /**
-   * Ikony: konwencja plików w `app/` (`icon.png`, `icon.svg`, `apple-icon.png`, `favicon.ico`).
-   * Next.js sam dodaje odpowiednie `<link rel="icon" | "apple-touch-icon">` przy buildzie.
-   * Regeneracja: `npm run generate-favicons` (źródło: `public/icon.svg` lub `public/brand/*`).
+   * Jawny stos faviconów (public/) + cache-busting — bez duplikatów z `app/icon.*`.
+   * Regeneracja: `npm run generate-favicons` (źródło: `public/icon.svg` lub `public/brand/logo.png`).
    */
+  manifest: faviconUrl("/site.webmanifest"),
+  icons: {
+    icon: [
+      { url: faviconUrl("/icon.svg"), type: "image/svg+xml" },
+      {
+        url: faviconUrl("/favicon.ico"),
+        sizes: "any",
+        type: "image/x-icon",
+      },
+    ],
+    apple: [
+      {
+        url: faviconUrl("/apple-touch-icon.png"),
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
 };
 
 /** Poprawne skalowanie na telefonach + notch / home indicator (iOS). */
@@ -87,6 +110,7 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
+        <CookieConsentRoot gaId={GA_MEASUREMENT_ID} />
         {children}
       </body>
     </html>

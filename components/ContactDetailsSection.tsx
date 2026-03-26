@@ -1,3 +1,5 @@
+import FooterLegalLinks from "@/components/FooterLegalLinks";
+
 export default function ContactDetailsSection() {
   return (
     <footer className="mx-auto w-full max-w-[1600px] overflow-hidden rounded-2xl bg-burgundy px-6 shadow-xl sm:px-10 lg:px-14">
@@ -95,9 +97,12 @@ export default function ContactDetailsSection() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-4 text-center text-xs text-white/35">
-        Copyright © <span suppressHydrationWarning>{new Date().getFullYear()}</span> Dan-Dom
-        Nieruchomości. Wszelkie prawa zastrzeżone.
+      <div className="border-t border-white/10 py-4 text-xs text-white/35">
+        <FooterLegalLinks />
+        <p className="mt-3 text-center">
+          Copyright © <span suppressHydrationWarning>{new Date().getFullYear()}</span> Dan-Dom
+          Nieruchomości. Wszelkie prawa zastrzeżone.
+        </p>
       </div>
     </footer>
   );
