@@ -78,9 +78,9 @@ jobs:
 
       - name: Pobranie eksportu Asari (SSH/rsync, opcjonalnie)
         env:
-          ASARI_SSH_HOST: ${{ secrets.ASARI_FTP_SERVER || vars.ASARI_FTP_SERVER || secrets.FTP_SERVER }}
-          ASARI_SSH_USER: ${{ secrets.ASARI_FTP_USERNAME || vars.ASARI_FTP_USERNAME || secrets.FTP_USERNAME }}
-          ASARI_SSH_PASS: ${{ secrets.ASARI_FTP_PASSWORD || vars.ASARI_FTP_PASSWORD || secrets.FTP_PASSWORD }}
+          ASARI_SSH_HOST: ${{ secrets.ASARI_SSH_HOST || vars.ASARI_SSH_HOST || secrets.ASARI_FTP_SERVER || vars.ASARI_FTP_SERVER || secrets.FTP_SERVER }}
+          ASARI_SSH_USER: ${{ secrets.ASARI_SSH_USER || vars.ASARI_SSH_USER || secrets.ASARI_FTP_USERNAME || vars.ASARI_FTP_USERNAME || secrets.FTP_USERNAME }}
+          ASARI_SSH_PASS: ${{ secrets.ASARI_SSH_PASS || vars.ASARI_SSH_PASS || secrets.ASARI_FTP_PASSWORD || vars.ASARI_FTP_PASSWORD || secrets.FTP_PASSWORD }}
           ASARI_SSH_PORT: ${{ secrets.ASARI_SSH_PORT || vars.ASARI_SSH_PORT || vars.SFTP_PORT || '222' }}
           ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || 'public_html/asari2' }}
           ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || 'public_html/asari2/foto' }}
