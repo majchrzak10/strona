@@ -27,7 +27,7 @@ export default function Home() {
         {/* ═══════════════════════════════════════════════════════
             RAMKI — wszystkie sekcje poniżej hero
         ═══════════════════════════════════════════════════════ */}
-        <div className="space-y-3 px-[max(1rem,env(safe-area-inset-left))] py-3 pr-[max(1rem,env(safe-area-inset-right))] sm:space-y-4 sm:px-6 sm:py-4 lg:px-10">
+        <div className="space-y-5 px-[max(1rem,env(safe-area-inset-left))] py-5 pr-[max(1rem,env(safe-area-inset-right))] sm:px-6 lg:px-10">
 
 
           {/* ───────────────────────────────────────────────────
@@ -57,7 +57,7 @@ export default function Home() {
           {/* ═══════════════════════════════════════════════════════
               SEKCJA 3 — O BIURZE + USŁUGI + ZESPÓŁ
           ═══════════════════════════════════════════════════════ */}
-          <section id="o-biurze" className="mx-auto w-full max-w-[1600px] rounded-2xl bg-white px-5 py-7 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:px-10 sm:py-10 lg:px-14 lg:py-12">
+          <section id="o-biurze" className="mx-auto w-full max-w-[1600px] rounded-2xl bg-white px-5 py-10 shadow-[0_4px_15px_rgba(0,0,0,0.05)] sm:px-10 sm:py-14 lg:px-14 lg:py-16">
             <div id="o-nas" className="-mt-24 pt-24" />
 
             <CompanyOverview />
@@ -67,7 +67,7 @@ export default function Home() {
             </section>
 
             {/* ══ TEAM ══ */}
-            <div className="mt-10 border-t border-zinc-100 pt-8 sm:mt-12 sm:pt-10" id="zespol">
+            <div className="mt-16 border-t border-zinc-100 pt-12" id="zespol">
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-primary">Poznaj nas</p>
               <h3 className="mt-2 font-[var(--font-playfair)] text-2xl font-bold text-brand-primary sm:text-3xl">Nasz zespół</h3>
               <div className="mt-2 h-0.5 w-14 rounded bg-brand-primary" />
