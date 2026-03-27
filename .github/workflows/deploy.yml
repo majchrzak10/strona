@@ -76,67 +76,46 @@ jobs:
       - name: Instalacja zależności
         run: npm ci
 
-      - name: Pobranie eksportu Asari (FTP XML+foto, opcjonalnie)
+      - name: Pobranie eksportu Asari (SSH/rsync, opcjonalnie)
         env:
-          ASARI_FTP_SERVER: ${{ secrets.ASARI_FTP_SERVER || vars.ASARI_FTP_SERVER || secrets.FTP_SERVER }}
-          ASARI_FTP_USERNAME: ${{ secrets.ASARI_FTP_USERNAME || vars.ASARI_FTP_USERNAME || secrets.FTP_USERNAME }}
-          ASARI_FTP_PASSWORD: ${{ secrets.ASARI_FTP_PASSWORD || vars.ASARI_FTP_PASSWORD || secrets.FTP_PASSWORD }}
-          ASARI_FTP_PORT: ${{ secrets.ASARI_FTP_PORT || vars.ASARI_FTP_PORT || '21' }}
-          ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || '/public_html/asari2' }}
-          ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || '/public_html/asari2/foto' }}
+          ASARI_SSH_HOST: ${{ secrets.ASARI_FTP_SERVER || vars.ASARI_FTP_SERVER || secrets.FTP_SERVER }}
+          ASARI_SSH_USER: ${{ secrets.ASARI_FTP_USERNAME || vars.ASARI_FTP_USERNAME || secrets.FTP_USERNAME }}
+          ASARI_SSH_PASS: ${{ secrets.ASARI_FTP_PASSWORD || vars.ASARI_FTP_PASSWORD || secrets.FTP_PASSWORD }}
+          ASARI_SSH_PORT: ${{ secrets.ASARI_SSH_PORT || vars.ASARI_SSH_PORT || vars.SFTP_PORT || '222' }}
+          ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || 'public_html/asari2' }}
+          ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || 'public_html/asari2/foto' }}
         run: |
           set -euo pipefail
-          if [ -z "${ASARI_FTP_SERVER:-}" ] || [ -z "${ASARI_FTP_USERNAME:-}" ] || [ -z "${ASARI_FTP_PASSWORD:-}" ]; then
-            echo "Brak danych FTP Asari — pomijam pobieranie FTP."
+          if [ -z "${ASARI_SSH_HOST:-}" ] || [ -z "${ASARI_SSH_USER:-}" ] || [ -z "${ASARI_SSH_PASS:-}" ]; then
+            echo "Brak danych SSH Asari — pomijam pobieranie Asari z serwera."
             exit 0
           fi
 
           sudo apt-get update -qq
-          sudo apt-get install -y -qq lftp
-
-          ASARI_FTP_USERNAME_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_FTP_USERNAME'], safe=''))")"
-          ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_FTP_PASSWORD'], safe=''))")"
-          ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_FTP_SERVER}:${ASARI_FTP_PORT}"
+          sudo apt-get install -y -qq rsync sshpass openssh-client
 
           TARGET="$GITHUB_WORKSPACE/asari-export"
           rm -rf "$TARGET"
           mkdir -p "$TARGET" "$TARGET/foto"
 
-          echo "Pobieram XML z: ${ASARI_REMOTE_XML_DIR}"
-          lftp -e "
-            set cmd:fail-exit true;
-            set net:timeout 25;
-            set net:max-retries 2;
-            set net:reconnect-interval-base 5;
-            set net:reconnect-interval-max 20;
-            set ftp:passive-mode true;
-            set ftp:ssl-allow false;
-            set ftp:ssl-force false;
-            set ssl:verify-certificate no;
-            open '${ASARI_FTP_URL}';
-            mirror --verbose '${ASARI_REMOTE_XML_DIR}' '${TARGET}';
-            bye
-          "
+          XML_DIR="${ASARI_REMOTE_XML_DIR#/}"
+          FOTO_DIR="${ASARI_REMOTE_FOTO_DIR#/}"
+          REMOTE="${ASARI_SSH_USER}@${ASARI_SSH_HOST}"
+          SSH_CMD="ssh -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
 
-          if [ -n "${ASARI_REMOTE_FOTO_DIR:-}" ]; then
-            echo "Pobieram FOTO z: ${ASARI_REMOTE_FOTO_DIR}"
-            lftp -e "
-              set cmd:fail-exit true;
-              set net:timeout 25;
-              set net:max-retries 2;
-              set net:reconnect-interval-base 5;
-              set net:reconnect-interval-max 20;
-              set ftp:passive-mode true;
-              set ftp:ssl-allow false;
-              set ftp:ssl-force false;
-              set ssl:verify-certificate no;
-              open '${ASARI_FTP_URL}';
-              mirror --verbose '${ASARI_REMOTE_FOTO_DIR}' '${TARGET}/foto';
-              bye
-            "
+          echo "Pobieram XML z: ${XML_DIR} (SSH port ${ASARI_SSH_PORT})"
+          SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
+            -e "${SSH_CMD}" \
+            "${REMOTE}:${XML_DIR%/}/" "${TARGET}/"
+
+          if [ -n "${FOTO_DIR:-}" ]; then
+            echo "Pobieram FOTO z: ${FOTO_DIR} (SSH port ${ASARI_SSH_PORT})"
+            SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
+              -e "${SSH_CMD}" \
+              "${REMOTE}:${FOTO_DIR%/}/" "${TARGET}/foto/"
           fi
 
-          echo "Pobrano asari-export z FTP."
+          echo "Pobrano asari-export przez SSH/rsync."
 
       - name: Pobranie eksportu Asari (ZIP, opcjonalnie)
         env:
