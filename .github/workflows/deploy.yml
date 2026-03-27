@@ -94,14 +94,17 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq lftp
 
+          ASARI_FTP_USERNAME_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_FTP_USERNAME'], safe=''))")"
+          ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_FTP_PASSWORD'], safe=''))")"
+          ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_FTP_SERVER}:${ASARI_FTP_PORT}"
+
           echo "=== DEBUG FTP Asari: test katalogów ==="
           lftp -e "
             set cmd:fail-exit false;
             set ftp:passive-mode true;
             set ftp:ssl-allow true;
             set ssl:verify-certificate no;
-            open -p ${ASARI_FTP_PORT} '${ASARI_FTP_SERVER}';
-            user '${ASARI_FTP_USERNAME}' '${ASARI_FTP_PASSWORD}';
+            open '${ASARI_FTP_URL}';
             pwd;
             ls;
             cls -1 /;
@@ -125,8 +128,7 @@ jobs:
             set ftp:passive-mode true;
             set ftp:ssl-allow true;
             set ssl:verify-certificate no;
-            open -p ${ASARI_FTP_PORT} '${ASARI_FTP_SERVER}';
-            user '${ASARI_FTP_USERNAME}' '${ASARI_FTP_PASSWORD}';
+            open '${ASARI_FTP_URL}';
             mirror --verbose '${ASARI_REMOTE_XML_DIR}' '${TARGET}';
             bye
           "
@@ -138,8 +140,7 @@ jobs:
               set ftp:passive-mode true;
               set ftp:ssl-allow true;
               set ssl:verify-certificate no;
-              open -p ${ASARI_FTP_PORT} '${ASARI_FTP_SERVER}';
-              user '${ASARI_FTP_USERNAME}' '${ASARI_FTP_PASSWORD}';
+              open '${ASARI_FTP_URL}';
               mirror --verbose '${ASARI_REMOTE_FOTO_DIR}' '${TARGET}/foto';
               bye
             "
