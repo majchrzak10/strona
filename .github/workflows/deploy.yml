@@ -8,16 +8,11 @@
 #
 # --- Asari (oferty + zdjęcia) — opcjonalne ---
 #   • Domyślnie: folder asari-export/ w repozytorium (XML + foto/ w commicie).
-#   • Auto-pobieranie z FTP (zalecane przy Asari eksportującym XML na serwer):
-#       ASARI_FTP_SERVER / ASARI_FTP_USERNAME / ASARI_FTP_PASSWORD
-#       ASARI_FTP_PORT (domyślnie 21)
-#       ASARI_REMOTE_XML_DIR  (domyślnie /public_html/asari2)
-#       ASARI_REMOTE_FOTO_DIR (domyślnie /public_html/asari2/foto)
-#   • Auto-pobieranie ZIP (zalecane do pełnej automatyzacji):
-#       ASARI_EXPORT_URL      — URL do paczki ZIP z eksportem Asari
-#       ASARI_EXPORT_USERNAME — opcjonalnie (basic auth)
-#       ASARI_EXPORT_PASSWORD — opcjonalnie (basic auth)
-#       ASARI_EXPORT_BEARER   — opcjonalnie (token bearer; alternatywa do basic auth)
+#   • Auto-pobieranie z serwera po SSH/rsync:
+#       używa tych samych sekretów co deploy: FTP_SERVER / FTP_USERNAME / FTP_PASSWORD
+#       ASARI_SSH_PORT (domyślnie 222)
+#       ASARI_REMOTE_XML_DIR  (domyślnie public_html/asari2)
+#       ASARI_REMOTE_FOTO_DIR (domyślnie public_html/asari2/foto)
 #   • Sekrety lub zmienne ASARI_DATA_DIR / ASARI_PHOTOS_DIR — gdy eksport jest poza repo
 #     albo chcesz nadpisać domyśl (vars.* wystarczy dla zwykłych ścieżek względnych).
 #   • Jeśli sekret jest pusty lub wskazuje nieistniejący katalog → używane jest
@@ -82,7 +77,6 @@ jobs:
           ASARI_SSH_USER: ${{ secrets.FTP_USERNAME }}
           ASARI_SSH_PASS: ${{ secrets.FTP_PASSWORD }}
           ASARI_SSH_PORT: ${{ secrets.ASARI_SSH_PORT || vars.ASARI_SSH_PORT || vars.SFTP_PORT || '222' }}
-          ASARI_FTP_PORT: ${{ secrets.ASARI_FTP_PORT || vars.ASARI_FTP_PORT || '21' }}
           ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || 'public_html/asari2' }}
           ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || 'public_html/asari2/foto' }}
         run: |
@@ -93,7 +87,7 @@ jobs:
           fi
 
           sudo apt-get update -qq
-          sudo apt-get install -y -qq rsync sshpass openssh-client lftp
+          sudo apt-get install -y -qq rsync sshpass openssh-client
 
           TARGET="$GITHUB_WORKSPACE/asari-export"
           STAGING="$RUNNER_TEMP/asari-export-fetch"
@@ -107,11 +101,7 @@ jobs:
           ASARI_SSH_USER_CLEAN="$(printf '%s' "${ASARI_SSH_USER}" | tr -d '\r\n')"
           ASARI_SSH_PASS_CLEAN="$(printf '%s' "${ASARI_SSH_PASS}" | tr -d '\r\n')"
           ASARI_SSH_PORT_CLEAN="$(printf '%s' "${ASARI_SSH_PORT}" | tr -d '\r\n')"
-          ASARI_FTP_PORT_CLEAN="$(printf '%s' "${ASARI_FTP_PORT}" | tr -d '\r\n')"
           SSH_CMD="ssh -l '${ASARI_SSH_USER_CLEAN}' -p ${ASARI_SSH_PORT_CLEAN} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
-          ASARI_FTP_USERNAME_ENC="$(python -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${ASARI_SSH_USER_CLEAN}")"
-          ASARI_FTP_PASSWORD_ENC="$(python -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${ASARI_SSH_PASS_CLEAN}")"
-          ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_SSH_HOST_CLEAN}:${ASARI_FTP_PORT_CLEAN}"
 
           fetch_xml_ssh() {
             echo "Pobieram XML z: ${XML_DIR} (SSH port ${ASARI_SSH_PORT})"
@@ -127,58 +117,18 @@ jobs:
               "${ASARI_SSH_HOST_CLEAN}:${FOTO_DIR%/}/" "${STAGING}/foto/"
           }
 
-          fetch_xml_ftp() {
-            echo "Pobieram XML z: ${XML_DIR} (FTP port ${ASARI_FTP_PORT})"
-            lftp -e "
-              set cmd:fail-exit true;
-              set net:timeout 25;
-              set net:max-retries 2;
-              set net:reconnect-interval-base 5;
-              set net:reconnect-interval-max 20;
-              set ftp:passive-mode true;
-              set ftp:ssl-allow false;
-              set ftp:ssl-force false;
-              open '${ASARI_FTP_URL}';
-              mirror --verbose --delete '${XML_DIR}' '${STAGING}';
-              bye
-            "
-          }
-
-          fetch_foto_ftp() {
-            echo "Pobieram FOTO z: ${FOTO_DIR} (FTP port ${ASARI_FTP_PORT})"
-            lftp -e "
-              set cmd:fail-exit true;
-              set net:timeout 25;
-              set net:max-retries 2;
-              set net:reconnect-interval-base 5;
-              set net:reconnect-interval-max 20;
-              set ftp:passive-mode true;
-              set ftp:ssl-allow false;
-              set ftp:ssl-force false;
-              open '${ASARI_FTP_URL}';
-              mirror --verbose --delete '${FOTO_DIR}' '${STAGING}/foto';
-              bye
-            "
-          }
-
           xml_ok="false"
           foto_ok="true"
 
           if fetch_xml_ssh; then
             xml_ok="true"
           else
-            echo "::warning::SSH/rsync Asari nie powiódł się — próbuję FTP/lftp."
-            if fetch_xml_ftp; then
-              xml_ok="true"
-            fi
+            echo "::warning::SSH/rsync Asari nie powiódł się. Używam asari-export/ z repo."
           fi
 
           if [ "${xml_ok}" = "true" ] && [ -n "${FOTO_DIR:-}" ]; then
             if ! fetch_foto_ssh; then
-              echo "::warning::SSH/rsync FOTO nie powiódł się — próbuję FTP/lftp."
-              if ! fetch_foto_ftp; then
-                foto_ok="false"
-              fi
+              foto_ok="false"
             fi
           fi
 
@@ -191,73 +141,8 @@ jobs:
               echo "::warning::XML pobrany, ale zdjęcia nie zostały odświeżone (zostaną poprzednie)."
             fi
           else
-            echo "::warning::Nie udało się pobrać Asari z serwera (SSH ani FTP). Używam asari-export/ z repo."
+            echo "::warning::Nie udało się pobrać Asari z serwera po SSH. Używam asari-export/ z repo."
           fi
-
-      - name: Pobranie eksportu Asari (ZIP, opcjonalnie)
-        env:
-          ASARI_EXPORT_URL: ${{ secrets.ASARI_EXPORT_URL || vars.ASARI_EXPORT_URL }}
-          ASARI_EXPORT_USERNAME: ${{ secrets.ASARI_EXPORT_USERNAME || vars.ASARI_EXPORT_USERNAME }}
-          ASARI_EXPORT_PASSWORD: ${{ secrets.ASARI_EXPORT_PASSWORD || vars.ASARI_EXPORT_PASSWORD }}
-          ASARI_EXPORT_BEARER: ${{ secrets.ASARI_EXPORT_BEARER || vars.ASARI_EXPORT_BEARER }}
-        run: |
-          set -euo pipefail
-          if [ -z "${ASARI_EXPORT_URL:-}" ]; then
-            echo "ASARI_EXPORT_URL nie ustawiono — używam asari-export/ z repo."
-            exit 0
-          fi
-
-          echo "Pobieram eksport Asari ZIP z URL (sekret)."
-          mkdir -p "$GITHUB_WORKSPACE/asari-export"
-          rm -rf "$GITHUB_WORKSPACE/asari-export"/*
-          TMP_ZIP="$RUNNER_TEMP/asari-export.zip"
-          TMP_UNPACK="$RUNNER_TEMP/asari-unpack"
-          rm -rf "$TMP_UNPACK"
-          mkdir -p "$TMP_UNPACK"
-
-          AUTH_ARGS=()
-          if [ -n "${ASARI_EXPORT_BEARER:-}" ]; then
-            AUTH_ARGS+=(-H "Authorization: Bearer ${ASARI_EXPORT_BEARER}")
-          elif [ -n "${ASARI_EXPORT_USERNAME:-}" ] || [ -n "${ASARI_EXPORT_PASSWORD:-}" ]; then
-            AUTH_ARGS+=(-u "${ASARI_EXPORT_USERNAME:-}:${ASARI_EXPORT_PASSWORD:-}")
-          fi
-
-          curl -fsSL "${AUTH_ARGS[@]}" "$ASARI_EXPORT_URL" -o "$TMP_ZIP"
-          unzip -q -o "$TMP_ZIP" -d "$TMP_UNPACK"
-
-          python - <<'PY'
-          import os
-          import shutil
-          from pathlib import Path
-
-          unpack = Path(os.environ["TMP_UNPACK"])
-          target = Path(os.environ["GITHUB_WORKSPACE"]) / "asari-export"
-
-          def has_offer_files(d: Path) -> bool:
-              return any(p.name.lower().endswith("_001.xml") for p in d.glob("*.xml"))
-
-          candidates = [unpack] + [p for p in unpack.rglob("*") if p.is_dir()]
-          source = next((d for d in candidates if has_offer_files(d)), None)
-          if source is None:
-              raise SystemExit("Nie znaleziono plików *_001.xml w paczce ZIP Asari.")
-
-          for item in source.iterdir():
-              dest = target / item.name
-              if dest.exists():
-                  if dest.is_dir():
-                      shutil.rmtree(dest)
-                  else:
-                      dest.unlink()
-              if item.is_dir():
-                  shutil.copytree(item, dest)
-              else:
-                  shutil.copy2(item, dest)
-
-          print(f"Asari source in ZIP: {source}")
-          print(f"Prepared target: {target}")
-          PY
-
-          echo "Pobrano i przygotowano asari-export/ do buildu."
 
       - name: Build statyczny (out/)
         env:

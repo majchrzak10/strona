@@ -38,6 +38,7 @@ function resolveSource() {
   const env = process.env.FAVICON_SOURCE;
   const candidates = [
     env && path.resolve(root, env),
+    path.join(root, "public", "favicon-source.png"),
     path.join(root, "public", "icon.svg"),
     path.join(root, "public", "brand", "logo-source.svg"),
     path.join(root, "public", "brand", "logo.png"),
@@ -47,7 +48,7 @@ function resolveSource() {
     if (fs.existsSync(p)) return p;
   }
   throw new Error(
-    "Brak pliku źródłowego. Dodaj public/brand/logo.png lub public/icon.svg, albo ustaw FAVICON_SOURCE.",
+    "Brak pliku źródłowego. Dodaj public/favicon-source.png, public/brand/logo.png lub public/icon.svg, albo ustaw FAVICON_SOURCE.",
   );
 }
 
