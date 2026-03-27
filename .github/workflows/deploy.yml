@@ -287,8 +287,8 @@ jobs:
           REMOTE="${REMOTE_PATH%/}"
           echo "rsync → ${SSH_USER}@${SSH_HOST}:${REMOTE}/ (port ${SSH_PORT})"
           sshpass -e rsync -avz --delete \
-            -e "ssh -p ${SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
-            ./out/ "${SSH_USER}@${SSH_HOST}:${REMOTE}/"
+            -e "ssh -l '${SSH_USER}' -p ${SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_HOST}:${REMOTE}/"
 
       - name: Wgranie na serwer (rsync + SSH, klucz)
         if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH == 'true' }}
@@ -305,8 +305,8 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           REMOTE="${REMOTE_PATH%/}"
           rsync -avz --delete \
-            -e "ssh -p ${SSH_PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
-            ./out/ "${SSH_USER}@${SSH_HOST}:${REMOTE}/"
+            -e "ssh -l '${SSH_USER}' -p ${SSH_PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_HOST}:${REMOTE}/"
           rm -f ~/.ssh/deploy_key
 
       - name: Wgranie na CyberFolks (FTP/FTPS — gdy SFTP niemożliwy)
