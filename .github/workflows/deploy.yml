@@ -99,20 +99,26 @@ jobs:
           mkdir -p "$TARGET" "$TARGET/foto"
 
           echo "Pobieram XML z: ${ASARI_REMOTE_XML_DIR}"
-          lftp -u "${ASARI_FTP_USERNAME},${ASARI_FTP_PASSWORD}" -p "${ASARI_FTP_PORT}" "${ASARI_FTP_SERVER}" -e "
+          lftp -e "
+            set cmd:fail-exit true;
             set ftp:passive-mode true;
             set ftp:ssl-allow true;
             set ssl:verify-certificate no;
+            open -p ${ASARI_FTP_PORT} '${ASARI_FTP_SERVER}';
+            user '${ASARI_FTP_USERNAME}' '${ASARI_FTP_PASSWORD}';
             mirror --verbose '${ASARI_REMOTE_XML_DIR}' '${TARGET}';
             bye
           "
 
           if [ -n "${ASARI_REMOTE_FOTO_DIR:-}" ]; then
             echo "Pobieram FOTO z: ${ASARI_REMOTE_FOTO_DIR}"
-            lftp -u "${ASARI_FTP_USERNAME},${ASARI_FTP_PASSWORD}" -p "${ASARI_FTP_PORT}" "${ASARI_FTP_SERVER}" -e "
+            lftp -e "
+              set cmd:fail-exit true;
               set ftp:passive-mode true;
               set ftp:ssl-allow true;
               set ssl:verify-certificate no;
+              open -p ${ASARI_FTP_PORT} '${ASARI_FTP_SERVER}';
+              user '${ASARI_FTP_USERNAME}' '${ASARI_FTP_PASSWORD}';
               mirror --verbose '${ASARI_REMOTE_FOTO_DIR}' '${TARGET}/foto';
               bye
             "
