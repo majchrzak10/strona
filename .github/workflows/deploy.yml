@@ -98,26 +98,6 @@ jobs:
           ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_FTP_PASSWORD'], safe=''))")"
           ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_FTP_SERVER}:${ASARI_FTP_PORT}"
 
-          echo "=== DEBUG FTP Asari: test katalogów ==="
-          lftp -e "
-            set cmd:fail-exit false;
-            set ftp:passive-mode true;
-            set ftp:ssl-allow true;
-            set ssl:verify-certificate no;
-            open '${ASARI_FTP_URL}';
-            pwd;
-            ls;
-            cls -1 /;
-            cls -1 public_html;
-            cls -1 /public_html;
-            cls -1 asari2;
-            cls -1 /asari2;
-            cls -1 public_html/asari2;
-            cls -1 /public_html/asari2;
-            bye
-          " || true
-          echo "=== /DEBUG FTP Asari ==="
-
           TARGET="$GITHUB_WORKSPACE/asari-export"
           rm -rf "$TARGET"
           mkdir -p "$TARGET" "$TARGET/foto"
@@ -125,6 +105,10 @@ jobs:
           echo "Pobieram XML z: ${ASARI_REMOTE_XML_DIR}"
           lftp -e "
             set cmd:fail-exit true;
+            set net:timeout 25;
+            set net:max-retries 2;
+            set net:reconnect-interval-base 5;
+            set net:reconnect-interval-max 20;
             set ftp:passive-mode true;
             set ftp:ssl-allow true;
             set ssl:verify-certificate no;
@@ -137,6 +121,10 @@ jobs:
             echo "Pobieram FOTO z: ${ASARI_REMOTE_FOTO_DIR}"
             lftp -e "
               set cmd:fail-exit true;
+              set net:timeout 25;
+              set net:max-retries 2;
+              set net:reconnect-interval-base 5;
+              set net:reconnect-interval-max 20;
               set ftp:passive-mode true;
               set ftp:ssl-allow true;
               set ssl:verify-certificate no;
