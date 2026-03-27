@@ -110,7 +110,8 @@ jobs:
             set net:reconnect-interval-base 5;
             set net:reconnect-interval-max 20;
             set ftp:passive-mode true;
-            set ftp:ssl-allow true;
+            set ftp:ssl-allow false;
+            set ftp:ssl-force false;
             set ssl:verify-certificate no;
             open '${ASARI_FTP_URL}';
             mirror --verbose '${ASARI_REMOTE_XML_DIR}' '${TARGET}';
@@ -126,7 +127,8 @@ jobs:
               set net:reconnect-interval-base 5;
               set net:reconnect-interval-max 20;
               set ftp:passive-mode true;
-              set ftp:ssl-allow true;
+              set ftp:ssl-allow false;
+              set ftp:ssl-force false;
               set ssl:verify-certificate no;
               open '${ASARI_FTP_URL}';
               mirror --verbose '${ASARI_REMOTE_FOTO_DIR}' '${TARGET}/foto';
