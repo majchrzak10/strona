@@ -103,20 +103,28 @@ jobs:
 
           XML_DIR="${ASARI_REMOTE_XML_DIR#/}"
           FOTO_DIR="${ASARI_REMOTE_FOTO_DIR#/}"
-          SSH_CMD="ssh -l '${ASARI_SSH_USER}' -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
+          ASARI_SSH_HOST_CLEAN="$(printf '%s' "${ASARI_SSH_HOST}" | tr -d '\r\n')"
+          ASARI_SSH_USER_CLEAN="$(printf '%s' "${ASARI_SSH_USER}" | tr -d '\r\n')"
+          ASARI_SSH_PASS_CLEAN="$(printf '%s' "${ASARI_SSH_PASS}" | tr -d '\r\n')"
+          ASARI_SSH_PORT_CLEAN="$(printf '%s' "${ASARI_SSH_PORT}" | tr -d '\r\n')"
+          ASARI_FTP_PORT_CLEAN="$(printf '%s' "${ASARI_FTP_PORT}" | tr -d '\r\n')"
+          SSH_CMD="ssh -l '${ASARI_SSH_USER_CLEAN}' -p ${ASARI_SSH_PORT_CLEAN} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
+          ASARI_FTP_USERNAME_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_USER_CLEAN'], safe=''))")"
+          ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_PASS_CLEAN'], safe=''))")"
+          ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_SSH_HOST_CLEAN}:${ASARI_FTP_PORT_CLEAN}"
 
           fetch_xml_ssh() {
             echo "Pobieram XML z: ${XML_DIR} (SSH port ${ASARI_SSH_PORT})"
-            SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
+            SSHPASS="${ASARI_SSH_PASS_CLEAN}" sshpass -e rsync -avz --delete \
               -e "${SSH_CMD}" \
-              "${ASARI_SSH_HOST}:${XML_DIR%/}/" "${STAGING}/"
+              "${ASARI_SSH_HOST_CLEAN}:${XML_DIR%/}/" "${STAGING}/"
           }
 
           fetch_foto_ssh() {
             echo "Pobieram FOTO z: ${FOTO_DIR} (SSH port ${ASARI_SSH_PORT})"
-            SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
+            SSHPASS="${ASARI_SSH_PASS_CLEAN}" sshpass -e rsync -avz --delete \
               -e "${SSH_CMD}" \
-              "${ASARI_SSH_HOST}:${FOTO_DIR%/}/" "${STAGING}/foto/"
+              "${ASARI_SSH_HOST_CLEAN}:${FOTO_DIR%/}/" "${STAGING}/foto/"
           }
 
           fetch_xml_ftp() {
@@ -130,7 +138,7 @@ jobs:
               set ftp:passive-mode true;
               set ftp:ssl-allow false;
               set ftp:ssl-force false;
-              open -u '${ASARI_SSH_USER}','${ASARI_SSH_PASS}' -p '${ASARI_FTP_PORT}' '${ASARI_SSH_HOST}';
+              open '${ASARI_FTP_URL}';
               mirror --verbose --delete '${XML_DIR}' '${STAGING}';
               bye
             "
@@ -147,7 +155,7 @@ jobs:
               set ftp:passive-mode true;
               set ftp:ssl-allow false;
               set ftp:ssl-force false;
-              open -u '${ASARI_SSH_USER}','${ASARI_SSH_PASS}' -p '${ASARI_FTP_PORT}' '${ASARI_SSH_HOST}';
+              open '${ASARI_FTP_URL}';
               mirror --verbose --delete '${FOTO_DIR}' '${STAGING}/foto';
               bye
             "
@@ -284,11 +292,15 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq rsync sshpass openssh-client
+          SSH_HOST_CLEAN="$(printf '%s' "${SSH_HOST}" | tr -d '\r\n')"
+          SSH_USER_CLEAN="$(printf '%s' "${SSH_USER}" | tr -d '\r\n')"
+          SSH_PORT_CLEAN="$(printf '%s' "${SSH_PORT}" | tr -d '\r\n')"
+          SSHPASS_CLEAN="$(printf '%s' "${SSHPASS}" | tr -d '\r\n')"
           REMOTE="${REMOTE_PATH%/}"
-          echo "rsync → ${SSH_USER}@${SSH_HOST}:${REMOTE}/ (port ${SSH_PORT})"
-          sshpass -e rsync -avz --delete \
-            -e "ssh -l '${SSH_USER}' -p ${SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
-            ./out/ "${SSH_HOST}:${REMOTE}/"
+          echo "rsync → ${SSH_USER_CLEAN}@${SSH_HOST_CLEAN}:${REMOTE}/ (port ${SSH_PORT_CLEAN})"
+          SSHPASS="${SSHPASS_CLEAN}" sshpass -e rsync -avz --delete \
+            -e "ssh -l '${SSH_USER_CLEAN}' -p ${SSH_PORT_CLEAN} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_HOST_CLEAN}:${REMOTE}/"
 
       - name: Wgranie na serwer (rsync + SSH, klucz)
         if: ${{ vars.DEPLOY_METHOD != 'lftp' && vars.SFTP_USE_KEY_AUTH == 'true' }}
@@ -300,13 +312,16 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq rsync openssh-client
+          SSH_HOST_CLEAN="$(printf '%s' "${SSH_HOST}" | tr -d '\r\n')"
+          SSH_USER_CLEAN="$(printf '%s' "${SSH_USER}" | tr -d '\r\n')"
+          SSH_PORT_CLEAN="$(printf '%s' "${SSH_PORT}" | tr -d '\r\n')"
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           REMOTE="${REMOTE_PATH%/}"
           rsync -avz --delete \
-            -e "ssh -l '${SSH_USER}' -p ${SSH_PORT} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
-            ./out/ "${SSH_HOST}:${REMOTE}/"
+            -e "ssh -l '${SSH_USER_CLEAN}' -p ${SSH_PORT_CLEAN} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
+            ./out/ "${SSH_HOST_CLEAN}:${REMOTE}/"
           rm -f ~/.ssh/deploy_key
 
       - name: Wgranie na CyberFolks (FTP/FTPS — gdy SFTP niemożliwy)
