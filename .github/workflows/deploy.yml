@@ -109,8 +109,8 @@ jobs:
           ASARI_SSH_PORT_CLEAN="$(printf '%s' "${ASARI_SSH_PORT}" | tr -d '\r\n')"
           ASARI_FTP_PORT_CLEAN="$(printf '%s' "${ASARI_FTP_PORT}" | tr -d '\r\n')"
           SSH_CMD="ssh -l '${ASARI_SSH_USER_CLEAN}' -p ${ASARI_SSH_PORT_CLEAN} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
-          ASARI_FTP_USERNAME_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_USER_CLEAN'], safe=''))")"
-          ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_PASS_CLEAN'], safe=''))")"
+          ASARI_FTP_USERNAME_ENC="$(python -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${ASARI_SSH_USER_CLEAN}")"
+          ASARI_FTP_PASSWORD_ENC="$(python -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=''))" "${ASARI_SSH_PASS_CLEAN}")"
           ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_SSH_HOST_CLEAN}:${ASARI_FTP_PORT_CLEAN}"
 
           fetch_xml_ssh() {
