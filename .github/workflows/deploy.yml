@@ -100,19 +100,18 @@ jobs:
 
           XML_DIR="${ASARI_REMOTE_XML_DIR#/}"
           FOTO_DIR="${ASARI_REMOTE_FOTO_DIR#/}"
-          REMOTE="${ASARI_SSH_USER}@${ASARI_SSH_HOST}"
-          SSH_CMD="ssh -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
+          SSH_CMD="ssh -l '${ASARI_SSH_USER}' -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
 
           echo "Pobieram XML z: ${XML_DIR} (SSH port ${ASARI_SSH_PORT})"
           SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
             -e "${SSH_CMD}" \
-            "${REMOTE}:${XML_DIR%/}/" "${TARGET}/"
+            "${ASARI_SSH_HOST}:${XML_DIR%/}/" "${TARGET}/"
 
           if [ -n "${FOTO_DIR:-}" ]; then
             echo "Pobieram FOTO z: ${FOTO_DIR} (SSH port ${ASARI_SSH_PORT})"
             SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
               -e "${SSH_CMD}" \
-              "${REMOTE}:${FOTO_DIR%/}/" "${TARGET}/foto/"
+              "${ASARI_SSH_HOST}:${FOTO_DIR%/}/" "${TARGET}/foto/"
           fi
 
           echo "Pobrano asari-export przez SSH/rsync."
