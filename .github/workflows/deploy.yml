@@ -96,29 +96,27 @@ jobs:
           sudo apt-get install -y -qq rsync sshpass openssh-client lftp
 
           TARGET="$GITHUB_WORKSPACE/asari-export"
-          rm -rf "$TARGET"
+          STAGING="$RUNNER_TEMP/asari-export-fetch"
+          rm -rf "$STAGING"
+          mkdir -p "$STAGING" "$STAGING/foto"
           mkdir -p "$TARGET" "$TARGET/foto"
 
           XML_DIR="${ASARI_REMOTE_XML_DIR#/}"
           FOTO_DIR="${ASARI_REMOTE_FOTO_DIR#/}"
-          REMOTE="${ASARI_SSH_USER}@${ASARI_SSH_HOST}"
-          SSH_CMD="ssh -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
-          ASARI_FTP_USERNAME_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_USER'], safe=''))")"
-          ASARI_FTP_PASSWORD_ENC="$(python -c "import os, urllib.parse; print(urllib.parse.quote(os.environ['ASARI_SSH_PASS'], safe=''))")"
-          ASARI_FTP_URL="ftp://${ASARI_FTP_USERNAME_ENC}:${ASARI_FTP_PASSWORD_ENC}@${ASARI_SSH_HOST}:${ASARI_FTP_PORT}"
+          SSH_CMD="ssh -l '${ASARI_SSH_USER}' -p ${ASARI_SSH_PORT} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=30"
 
           fetch_xml_ssh() {
             echo "Pobieram XML z: ${XML_DIR} (SSH port ${ASARI_SSH_PORT})"
             SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
               -e "${SSH_CMD}" \
-              "${REMOTE}:${XML_DIR%/}/" "${TARGET}/"
+              "${ASARI_SSH_HOST}:${XML_DIR%/}/" "${STAGING}/"
           }
 
           fetch_foto_ssh() {
             echo "Pobieram FOTO z: ${FOTO_DIR} (SSH port ${ASARI_SSH_PORT})"
             SSHPASS="${ASARI_SSH_PASS}" sshpass -e rsync -avz --delete \
               -e "${SSH_CMD}" \
-              "${REMOTE}:${FOTO_DIR%/}/" "${TARGET}/foto/"
+              "${ASARI_SSH_HOST}:${FOTO_DIR%/}/" "${STAGING}/foto/"
           }
 
           fetch_xml_ftp() {
@@ -132,8 +130,8 @@ jobs:
               set ftp:passive-mode true;
               set ftp:ssl-allow false;
               set ftp:ssl-force false;
-              open '${ASARI_FTP_URL}';
-              mirror --verbose '${XML_DIR}' '${TARGET}';
+              open -u '${ASARI_SSH_USER}','${ASARI_SSH_PASS}' -p '${ASARI_FTP_PORT}' '${ASARI_SSH_HOST}';
+              mirror --verbose --delete '${XML_DIR}' '${STAGING}';
               bye
             "
           }
@@ -149,25 +147,44 @@ jobs:
               set ftp:passive-mode true;
               set ftp:ssl-allow false;
               set ftp:ssl-force false;
-              open '${ASARI_FTP_URL}';
-              mirror --verbose '${FOTO_DIR}' '${TARGET}/foto';
+              open -u '${ASARI_SSH_USER}','${ASARI_SSH_PASS}' -p '${ASARI_FTP_PORT}' '${ASARI_SSH_HOST}';
+              mirror --verbose --delete '${FOTO_DIR}' '${STAGING}/foto';
               bye
             "
           }
 
-          if ! fetch_xml_ssh; then
-            echo "::warning::SSH/rsync Asari nie powiódł się — próbuję FTP/lftp."
-            fetch_xml_ftp
-          fi
+          xml_ok="false"
+          foto_ok="true"
 
-          if [ -n "${FOTO_DIR:-}" ]; then
-            if ! fetch_foto_ssh; then
-              echo "::warning::SSH/rsync FOTO nie powiódł się — próbuję FTP/lftp."
-              fetch_foto_ftp
+          if fetch_xml_ssh; then
+            xml_ok="true"
+          else
+            echo "::warning::SSH/rsync Asari nie powiódł się — próbuję FTP/lftp."
+            if fetch_xml_ftp; then
+              xml_ok="true"
             fi
           fi
 
-          echo "Pobrano asari-export (SSH lub FTP fallback)."
+          if [ "${xml_ok}" = "true" ] && [ -n "${FOTO_DIR:-}" ]; then
+            if ! fetch_foto_ssh; then
+              echo "::warning::SSH/rsync FOTO nie powiódł się — próbuję FTP/lftp."
+              if ! fetch_foto_ftp; then
+                foto_ok="false"
+              fi
+            fi
+          fi
+
+          if [ "${xml_ok}" = "true" ]; then
+            rm -rf "$TARGET"
+            mkdir -p "$TARGET"
+            rsync -a --delete "${STAGING}/" "${TARGET}/"
+            echo "Pobrano asari-export (SSH lub FTP fallback)."
+            if [ "${foto_ok}" != "true" ]; then
+              echo "::warning::XML pobrany, ale zdjęcia nie zostały odświeżone (zostaną poprzednie)."
+            fi
+          else
+            echo "::warning::Nie udało się pobrać Asari z serwera (SSH ani FTP). Używam asari-export/ z repo."
+          fi
 
       - name: Pobranie eksportu Asari (ZIP, opcjonalnie)
         env:
