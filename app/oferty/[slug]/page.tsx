@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ContactDetailsSection from "@/components/ContactDetailsSection";
+import OfferViewTracker from "@/components/analytics/OfferViewTracker";
 import OfferDetailRail from "@/components/offers/OfferDetailRail";
 import PropertyGallery from "@/components/offers/PropertyGallery";
 import { relativeUrlForZdjeciaFile } from "@/lib/asari/imageUrl";
@@ -164,6 +165,14 @@ export default async function OfertaSinglePage({ params }: Props) {
 
       <main className="px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
         <div className="mx-auto w-full max-w-7xl">
+          <OfferViewTracker
+            signature={o.signature}
+            slug={o.slug}
+            category={o.category}
+            transaction={o.transaction}
+            locationLabel={o.locationLabel}
+            pricePln={o.pricePln}
+          />
           <Link
             href="/oferty"
             className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline"

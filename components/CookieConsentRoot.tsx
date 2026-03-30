@@ -3,6 +3,7 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import { trackEvent } from "@/lib/client/analytics";
 
 const STORAGE_KEY = "dan-dom-cookie-consent";
 const STORAGE_VERSION = 1;
@@ -45,12 +46,43 @@ export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
   const acceptAnalytics = useCallback(() => {
     writeStored(true);
     setConsent("analytics");
+    trackEvent("cookie_consent_update", { analytics_storage: "granted" });
   }, []);
 
   const essentialOnly = useCallback(() => {
     writeStored(false);
     setConsent("essential");
+    trackEvent("cookie_consent_update", { analytics_storage: "denied" });
   }, []);
+
+  useEffect(() => {
+    if (consent !== "analytics") return;
+
+    const onClick = (evt: MouseEvent) => {
+      const target = evt.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const href = anchor.getAttribute("href") ?? "";
+
+      if (href.startsWith("tel:")) {
+        trackEvent("click_phone", {
+          method: "tel",
+          destination: href.replace(/^tel:/, ""),
+          link_text: anchor.textContent?.trim() ?? "",
+        });
+      } else if (href.startsWith("mailto:")) {
+        trackEvent("click_email", {
+          method: "mailto",
+          destination: href.replace(/^mailto:/, ""),
+          link_text: anchor.textContent?.trim() ?? "",
+        });
+      }
+    };
+
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [consent]);
 
   if (!gaId) {
     return null;

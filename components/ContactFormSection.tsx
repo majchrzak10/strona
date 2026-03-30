@@ -5,6 +5,7 @@ import {
   isContactFormRateLimitOk,
   recordContactFormSubmit,
 } from "@/lib/client/contactFormRateLimit";
+import { trackEvent } from "@/lib/client/analytics";
 import { SITE_URL } from "@/lib/seo/site";
 import { contactFormSchema } from "@/lib/validation/contactForm";
 
@@ -108,6 +109,10 @@ export default function ContactFormSection() {
         return;
       }
       recordContactFormSubmit();
+      trackEvent("generate_lead", {
+        lead_type: "contact_form",
+        form_name: "contact_main",
+      });
       setIsSuccess(true);
       setForm({ firstName: "", lastName: "", email: "", phone: "", message: "" });
     } catch {
