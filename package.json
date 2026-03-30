@@ -7,6 +7,7 @@
     "predev": "node scripts/ensure-zdjecia.mjs",
     "dev": "next dev --webpack",
     "dev:open": "concurrently \"next dev --webpack\" \"wait-on tcp:3000 && node scripts/open-preview.mjs\"",
+    "sync:asari:auto": "powershell -ExecutionPolicy Bypass -File scripts/sync-asari-auto.ps1",
     "serve:out": "npx --yes serve@14 out -l 4173",
     "prebuild": "node scripts/generate-favicons.mjs && node scripts/copy-photos.mjs",
     "build": "next build",

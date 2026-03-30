@@ -44,7 +44,7 @@ export default function Hero() {
             <div className="mt-4 flex justify-center">
               <Link
                 href="/#oferty"
-                className="inline-flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center gap-2 rounded-full bg-brand-primary px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-sm transition-colors hover:bg-brand-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f0811] active:scale-[0.98]"
+                className="inline-flex min-h-[44px] min-w-[44px] touch-manipulation items-center justify-center gap-2 rounded-full border border-white/70 bg-white/10 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-sm backdrop-blur-[1px] transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2f0811] active:scale-[0.98]"
                 aria-label="Przejdź do listy nieruchomości — najnowsze oferty"
               >
                 Zobacz najnowsze oferty
