@@ -150,6 +150,7 @@ jobs:
           ASARI_PHOTOS_DIR: ${{ secrets.ASARI_PHOTOS_DIR || vars.ASARI_PHOTOS_DIR }}
           NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
           NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.WEB3FORMS_ACCESS_KEY }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-FN97HMK379' }}
         run: |
           set -euo pipefail
           DEFAULT_ASARI="$GITHUB_WORKSPACE/asari-export"
