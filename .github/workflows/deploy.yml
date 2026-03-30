@@ -117,6 +117,27 @@ jobs:
               "${ASARI_SSH_HOST_CLEAN}:${FOTO_DIR%/}/" "${STAGING}/foto/"
           }
 
+          count_offers_in_dir() {
+            local dir="$1"
+            python - "$dir" <<'PY'
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+count = 0
+for p in root.glob("*.xml"):
+    name = p.name.lower()
+    if "definictions" in name or "definitions" in name:
+        continue
+    try:
+        text = p.read_text(encoding="utf-8", errors="ignore")
+    except Exception:
+        continue
+    count += text.count("<offer>")
+print(count)
+PY
+          }
+
           xml_ok="false"
           foto_ok="true"
 
@@ -133,10 +154,27 @@ jobs:
           fi
 
           if [ "${xml_ok}" = "true" ]; then
+            PREV_COUNT="$(count_offers_in_dir "$TARGET")"
+            NEW_COUNT="$(count_offers_in_dir "$STAGING")"
+            echo "Asari sanity-check: poprzednio=${PREV_COUNT}, nowy eksport=${NEW_COUNT}"
+
+            if [ "${NEW_COUNT}" -eq 0 ]; then
+              echo "::warning::Nowy eksport Asari ma 0 ofert — pomijam podmianę (zostaje poprzedni stan)."
+              xml_ok="false"
+            elif [ "${PREV_COUNT}" -gt 0 ]; then
+              MIN_ALLOWED=$(( (PREV_COUNT * 70 + 99) / 100 ))
+              if [ "${NEW_COUNT}" -lt "${MIN_ALLOWED}" ]; then
+                echo "::warning::Nowy eksport Asari wygląda na niepełny (${NEW_COUNT} < 70% z ${PREV_COUNT}) — pomijam podmianę."
+                xml_ok="false"
+              fi
+            fi
+          fi
+
+          if [ "${xml_ok}" = "true" ]; then
             rm -rf "$TARGET"
             mkdir -p "$TARGET"
             rsync -a --delete "${STAGING}/" "${TARGET}/"
-            echo "Pobrano asari-export (SSH lub FTP fallback)."
+            echo "Pobrano asari-export (SSH) i zaakceptowano sanity-check."
             if [ "${foto_ok}" != "true" ]; then
               echo "::warning::XML pobrany, ale zdjęcia nie zostały odświeżone (zostaną poprzednie)."
             fi
