@@ -119,23 +119,22 @@ jobs:
 
           count_offers_in_dir() {
             local dir="$1"
-            python - "$dir" <<'PY'
+            python3 -c "
 import sys
 from pathlib import Path
-
 root = Path(sys.argv[1])
 count = 0
-for p in root.glob("*.xml"):
+for p in root.glob('*.xml'):
     name = p.name.lower()
-    if "definictions" in name or "definitions" in name:
+    if 'definictions' in name or 'definitions' in name:
         continue
     try:
-        text = p.read_text(encoding="utf-8", errors="ignore")
+        text = p.read_text(encoding='utf-8', errors='ignore')
     except Exception:
         continue
-    count += text.count("<offer>")
+    count += text.count('<offer>')
 print(count)
-PY
+" "$dir"
           }
 
           xml_ok="false"
