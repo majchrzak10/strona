@@ -3,6 +3,8 @@
  * Blok „O biurze”: zachowany gradient, tekst bez kafelka.
  */
 
+import Link from "next/link";
+
 export default function CompanyOverview() {
   return (
     <>
@@ -47,6 +49,7 @@ export default function CompanyOverview() {
           {[
             {
               title: "Sprzedaż nieruchomości",
+              href: "/uslugi/sprzedaz-nieruchomosci/",
               desc: "Przeprowadzamy przez cały proces – od stworzenia profesjonalnej oferty z atrakcyjnymi zdjęciami, przez skuteczny marketing i negocjacje cenowe, aż po bezstresową finalizację transakcji u notariusza.",
               icon: (
                 <svg
@@ -74,6 +77,7 @@ export default function CompanyOverview() {
             },
             {
               title: "Wynajem nieruchomości",
+              href: "/uslugi/wynajem-nieruchomosci/",
               desc: "Szybko i bezpiecznie łączymy właścicieli z najemcami. Znajdujemy oferty idealnie dopasowane do oczekiwań, pomagamy wynegocjować najlepsze warunki i przygotowujemy solidne umowy chroniące obie strony.",
               icon: (
                 <svg
@@ -100,6 +104,7 @@ export default function CompanyOverview() {
             },
             {
               title: "Pomoc prawna i formalności",
+              href: undefined,
               desc: "Analizujemy stan prawny nieruchomości — badamy księgi wieczyste, umowy i pozwolenia. Reprezentujemy klientów w urzędach i dbamy o to, by każda transakcja była wolna od ryzyka.",
               icon: (
                 <svg
@@ -132,6 +137,7 @@ export default function CompanyOverview() {
             },
             {
               title: "Wyceny nieruchomości",
+              href: "/uslugi/wycena-nieruchomosci/",
               desc: "Dostarczamy rzetelne wyceny oparte na bieżących, realnych danych z lokalnego rynku. Oszacujemy właściwą wartość Twojego majątku na potrzeby sprzedaży, zakupu lub podziału.",
               icon: (
                 <svg
@@ -159,6 +165,7 @@ export default function CompanyOverview() {
             },
             {
               title: "Pośrednictwo w obrocie gruntami",
+              href: undefined,
               desc: "Eksperckie wsparcie w transakcjach kupna i sprzedaży gruntów rolnych, budowlanych, rekreacyjnych oraz inwestycyjnych. Doradzamy w sprawach zagospodarowania przestrzennego i potencjału zabudowy.",
               icon: (
                 <svg
@@ -192,6 +199,7 @@ export default function CompanyOverview() {
             },
             {
               title: "Doradztwo inwestycyjne",
+              href: undefined,
               desc: "Pomagamy w mądrym lokowaniu kapitału. Wybieramy nieruchomości pod inwestycję (tzw. flipy, lokale na wynajem długoterminowy), prognozujemy rentowność i oceniamy opłacalność projektu.",
               icon: (
                 <svg
@@ -231,6 +239,17 @@ export default function CompanyOverview() {
               <p className="mt-3 min-h-0 flex-1 text-sm leading-relaxed text-zinc-600">
                 {service.desc}
               </p>
+              {service.href && (
+                <Link
+                  href={service.href}
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand-primary opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                >
+                  Dowiedz się więcej
+                  <svg aria-hidden="true" className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              )}
               <div className="absolute bottom-0 left-0 h-0.5 w-0 rounded-b-xl bg-brand-primary transition-all duration-300 group-hover:w-full" />
             </article>
           ))}

@@ -9,6 +9,7 @@ import { relativeUrlForZdjeciaFile } from "@/lib/asari/imageUrl";
 import { loadAsariOffers } from "@/lib/asari/loadOffers";
 import { PLACEHOLDER_IMG } from "@/lib/asari/placeholderImg";
 import { photoNameFromApiUrl } from "@/lib/asari/photoUrl";
+import { offerJsonLd } from "@/lib/seo/offerJsonLd";
 import { canonicalUrl } from "@/lib/seo/site";
 import { notFound } from "next/navigation";
 
@@ -158,9 +159,14 @@ export default async function OfertaSinglePage({ params }: Props) {
       </p>
     </section>
   );
+  const offerStructuredData = offerJsonLd({ offer: o });
 
   return (
     <div className="min-h-screen bg-[#f0f0f0] text-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(offerStructuredData) }}
+      />
       <Navbar />
 
       <main className="px-3 py-6 sm:px-6 sm:py-8 lg:px-8">

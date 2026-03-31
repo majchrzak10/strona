@@ -16,6 +16,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: canonicalUrl("oferty"), lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: canonicalUrl("nieruchomosci"), lastModified: new Date(), changeFrequency: "daily", priority: 0.85 },
     {
+      url: canonicalUrl("uslugi/sprzedaz-nieruchomosci"),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: canonicalUrl("uslugi/wynajem-nieruchomosci"),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
+      url: canonicalUrl("uslugi/wycena-nieruchomosci"),
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.75,
+    },
+    {
       url: canonicalUrl("polityka-prywatnosci"),
       lastModified: new Date(),
       changeFrequency: "yearly",

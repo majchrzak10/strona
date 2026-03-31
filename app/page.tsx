@@ -9,16 +9,42 @@ import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 import RecentOffersSection from "@/components/RecentOffersSection";
 import RecentOffersSkeleton from "@/components/RecentOffersSkeleton";
+import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
 import { canonicalUrl } from "@/lib/seo/site";
+import { faqJsonLd } from "@/lib/seo/faqJsonLd";
 
 export const metadata: Metadata = {
+  title: "Biuro nieruchomości Wągrowiec i Rogoźno — Dan-Dom",
+  description:
+    "Dan-Dom Nieruchomości: sprzedaż, zakup i wynajem nieruchomości w Wągrowcu i Rogoźnie. Sprawdź aktualne oferty i skontaktuj się z agentem.",
   alternates: { canonical: canonicalUrl("") },
   openGraph: { url: canonicalUrl("") },
 };
 
+const homeBreadcrumbJsonLd = breadcrumbJsonLd([{ name: "Strona główna", route: "" }]);
+const homeFaqJsonLd = faqJsonLd("home", [
+  {
+    question: "Na jakim obszarze działa biuro Dan-Dom?",
+    answer:
+      "Obsługujemy przede wszystkim Wągrowiec, Rogoźno i okoliczne miejscowości w województwie wielkopolskim.",
+  },
+  {
+    question: "Czy pomagacie również w finansowaniu zakupu nieruchomości?",
+    answer:
+      "Tak. Wspieramy klientów także w zakresie formalności, współpracy z doradcą kredytowym i przygotowania transakcji.",
+  },
+  {
+    question: "Jak najszybciej skontaktować się w sprawie oferty?",
+    answer:
+      "Najszybciej telefonicznie lub przez formularz kontaktowy na stronie. Odpowiadamy możliwie szybko w godzinach pracy biura.",
+  },
+]);
+
 export default function Home() {
   return (
     <div className="min-h-screen min-w-0 overflow-x-hidden bg-[#f4f4f4] text-black [text-rendering:optimizeLegibility]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeBreadcrumbJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeFaqJsonLd) }} />
       <Navbar />
 
       <main>

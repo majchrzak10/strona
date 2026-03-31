@@ -1,19 +1,29 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import ContactDetailsSection from "@/components/ContactDetailsSection";
+import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
 import { canonicalUrl } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Polityka prywatności",
+  title: "Polityka prywatności — Dan-Dom Nieruchomości",
   description:
     "Zasady przetwarzania danych osobowych i plików cookies w serwisie Dan-Dom Nieruchomości.",
   alternates: { canonical: canonicalUrl("polityka-prywatnosci") },
   openGraph: { url: canonicalUrl("polityka-prywatnosci") },
 };
 
+const privacyBreadcrumbJsonLd = breadcrumbJsonLd([
+  { name: "Strona główna", route: "" },
+  { name: "Polityka prywatności", route: "polityka-prywatnosci" },
+]);
+
 export default function PolitykaPrywatnosciPage() {
   return (
     <div className="min-h-screen bg-[#f4f4f4] text-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(privacyBreadcrumbJsonLd) }}
+      />
       <Navbar />
 
       <main className="px-4 py-10 sm:px-6 lg:px-10">

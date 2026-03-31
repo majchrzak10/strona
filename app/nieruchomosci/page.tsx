@@ -6,15 +6,21 @@ import FilteredOffersGrid from "@/components/nieruchomosci/FilteredOffersGrid";
 import NieruchomosciListingHeading from "@/components/nieruchomosci/NieruchomosciListingHeading";
 import { loadAsariOffers } from "@/lib/asari/loadOffers";
 import { toCard } from "@/lib/asari/mapOffer";
+import { breadcrumbJsonLd } from "@/lib/seo/breadcrumbJsonLd";
 import { canonicalUrl } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Nieruchomości — Dan-Dom",
+  title: "Nieruchomości Wągrowiec i Rogoźno — aktualne oferty Dan-Dom",
   description:
     "Aktualne oferty sprzedaży i wynajmu mieszkań, domów, działek i lokali komercyjnych. Biuro nieruchomości Dan-Dom — Wągrowiec i Rogoźno.",
   alternates: { canonical: canonicalUrl("nieruchomosci") },
   openGraph: { url: canonicalUrl("nieruchomosci") },
 };
+
+const nieruchomosciBreadcrumbJsonLd = breadcrumbJsonLd([
+  { name: "Strona główna", route: "" },
+  { name: "Nieruchomości", route: "nieruchomosci" },
+]);
 
 export default async function NieruchomosciPage() {
   const { offers, error } = await loadAsariOffers();
@@ -22,6 +28,10 @@ export default async function NieruchomosciPage() {
 
   return (
     <div className="min-h-screen min-w-0 overflow-x-hidden bg-[#f4f4f4] text-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(nieruchomosciBreadcrumbJsonLd) }}
+      />
       <Navbar />
 
       <main className="min-w-0 px-3 py-8 sm:px-6 sm:py-10 lg:px-10">

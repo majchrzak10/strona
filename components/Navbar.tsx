@@ -15,19 +15,29 @@ const PROPERTY_LINKS = [
   { href: "/nieruchomosci/?typ=wynajem", label: "Wynajem" },
 ];
 
+const SERVICE_LINKS = [
+  { href: "/uslugi/sprzedaz-nieruchomosci/", label: "Sprzedaż nieruchomości" },
+  { href: "/uslugi/wynajem-nieruchomosci/", label: "Wynajem nieruchomości" },
+  { href: "/uslugi/wycena-nieruchomosci/", label: "Wycena nieruchomości" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  /** Tylko desktop — dropdown „Nieruchomości” */
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
-  /** Tylko mobile drawer — rozwinięcie pod „Nieruchomości” (osobny stan = brak konfliktu z desktopem) */
+  const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
   const [mobilePropertyOpen, setMobilePropertyOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const servicesDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDesktopDropdownOpen(false);
+      }
+      if (servicesDropdownRef.current && !servicesDropdownRef.current.contains(e.target as Node)) {
+        setDesktopServicesOpen(false);
       }
     }
     document.addEventListener("mousedown", handleOutsideClick);
@@ -45,16 +55,18 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  /** Po zmianie trasy zamykaj drawer i akordeon (Next nie zawsze odpala klik na Link na mobile). */
   useEffect(() => {
     setMobileOpen(false);
     setMobilePropertyOpen(false);
+    setMobileServicesOpen(false);
   }, [pathname]);
 
   function closeMobile() {
     setMobileOpen(false);
     setMobilePropertyOpen(false);
+    setMobileServicesOpen(false);
     setDesktopDropdownOpen(false);
+    setDesktopServicesOpen(false);
   }
 
   return (
@@ -89,12 +101,13 @@ export default function Navbar() {
                 </Link>
               ))}
 
+              {/* Dropdown — Nieruchomości */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
                   aria-expanded={desktopDropdownOpen}
                   aria-haspopup="true"
-                  onClick={() => setDesktopDropdownOpen((v) => !v)}
+                  onClick={() => { setDesktopDropdownOpen((v) => !v); setDesktopServicesOpen(false); }}
                   className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-base font-semibold text-black/80 transition-colors hover:text-black"
                 >
                   Nieruchomości
@@ -117,6 +130,46 @@ export default function Navbar() {
                           <Link
                             href={l.href}
                             onClick={() => setDesktopDropdownOpen(false)}
+                            className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-[0.95rem] font-medium text-zinc-700 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
+                          >
+                            {l.label}
+                          </Link>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Dropdown — Usługi */}
+              <div className="relative" ref={servicesDropdownRef}>
+                <button
+                  type="button"
+                  aria-expanded={desktopServicesOpen}
+                  aria-haspopup="true"
+                  onClick={() => { setDesktopServicesOpen((v) => !v); setDesktopDropdownOpen(false); }}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-md px-1 text-base font-semibold text-black/80 transition-colors hover:text-black"
+                >
+                  Usługi
+                  <svg
+                    aria-hidden="true"
+                    className={`h-5 w-5 text-brand-primary transition-transform duration-200 ${desktopServicesOpen ? "rotate-180" : ""}`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                {desktopServicesOpen && (
+                  <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3">
+                    <div className="min-w-[220px] overflow-hidden rounded-xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-1 ring-black/5">
+                      {SERVICE_LINKS.map((l, i) => (
+                        <div key={l.href}>
+                          {i > 0 && <div className="mx-4 h-px bg-zinc-100" />}
+                          <Link
+                            href={l.href}
+                            onClick={() => setDesktopServicesOpen(false)}
                             className="flex min-h-[44px] items-center gap-2 px-4 py-3 text-[0.95rem] font-medium text-zinc-700 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
                           >
                             {l.label}
@@ -214,6 +267,7 @@ export default function Navbar() {
             </Link>
           ))}
 
+          {/* Mobile akordeon — Nieruchomości */}
           <div className="mt-1 border-t border-transparent">
             <button
               type="button"
@@ -243,6 +297,43 @@ export default function Navbar() {
                   href={l.href}
                   prefetch
                   scroll
+                  onClick={closeMobile}
+                  className="flex min-h-[48px] items-center px-4 py-3 text-[0.95rem] font-medium text-zinc-800 transition-colors hover:bg-brand-primary/10 hover:text-brand-primary active:bg-brand-primary/15"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile akordeon — Usługi */}
+          <div className="mt-1">
+            <button
+              type="button"
+              aria-expanded={mobileServicesOpen}
+              aria-controls="mobile-services-submenu"
+              onClick={() => setMobileServicesOpen((v) => !v)}
+              className="flex min-h-[48px] w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
+            >
+              Usługi
+              <svg
+                aria-hidden="true"
+                className={`h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`}
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            <div
+              id="mobile-services-submenu"
+              className={`${mobileServicesOpen ? "block" : "hidden"} relative z-10 mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50`}
+            >
+              {SERVICE_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
                   onClick={closeMobile}
                   className="flex min-h-[48px] items-center px-4 py-3 text-[0.95rem] font-medium text-zinc-800 transition-colors hover:bg-brand-primary/10 hover:text-brand-primary active:bg-brand-primary/15"
                 >
