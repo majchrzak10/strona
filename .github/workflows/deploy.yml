@@ -118,23 +118,16 @@ jobs:
           }
 
           count_offers_in_dir() {
-            local dir="$1"
-            python3 -c "
-import sys
-from pathlib import Path
-root = Path(sys.argv[1])
-count = 0
-for p in root.glob('*.xml'):
-    name = p.name.lower()
-    if 'definictions' in name or 'definitions' in name:
-        continue
-    try:
-        text = p.read_text(encoding='utf-8', errors='ignore')
-    except Exception:
-        continue
-    count += text.count('<offer>')
-print(count)
-" "$dir"
+            local dir="$1" total=0 n=0
+            for f in "${dir}"/*.xml; do
+              [ -f "$f" ] || continue
+              case "$(basename "$f" | tr "[:upper:]" "[:lower:]")" in
+                definictions*|definitions*) continue ;;
+              esac
+              n=$(grep -o "<offer>" "$f" 2>/dev/null | wc -l) || n=0
+              total=$((total + n))
+            done
+            echo "$total"
           }
 
           xml_ok="false"
