@@ -712,6 +712,10 @@
       <name>świadectwo energetyczne - udział odnawialnych źródeł energii w rocznym zapotrzebowaniu na energię końcową [%]</name>
       <type>2</type>
     </p>
+    <p id="349">
+      <name>obsługa zdalna</name>
+      <type>1</type>
+    </p>
     <p id="350">
       <name>link do filmu - prezentacji</name>
       <type>4</type>
