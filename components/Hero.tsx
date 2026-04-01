@@ -32,9 +32,8 @@ export default function Hero() {
             </p>
 
             <h1 className="mt-2 max-w-full font-sans text-[clamp(1.2rem,4.2vw,1.7rem)] font-bold leading-[1.2] tracking-tight text-white drop-shadow-sm">
-              PONAD{" "}
-              <span className="text-brand-primary drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]">28&nbsp;LAT</span>{" "}
-              DOŚWIADCZENIA I ZNAJOMOŚĆ LOKALNEGO RYNKU.
+              Biuro Nieruchomości{" "}
+              <span className="text-brand-primary drop-shadow-[0_1px_2px_rgba(0,0,0,0.45)]">Wągrowiec&nbsp;i&nbsp;Rogoźno</span>
             </h1>
 
             <p className="mt-2.5 max-w-sm text-[clamp(0.8125rem,2.8vw,0.9375rem)] leading-relaxed text-white/80 drop-shadow-sm md:max-w-md">
