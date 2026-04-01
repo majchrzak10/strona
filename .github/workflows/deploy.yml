@@ -117,7 +117,7 @@ jobs:
               "${ASARI_SSH_HOST_CLEAN}:${FOTO_DIR%/}/" "${STAGING}/foto/"
           }
 
-          count_offers_in_dir() {
+          count_new_offers() {
             local dir="$1" total=0 n=0
             for f in "${dir}"/*.xml; do
               [ -f "$f" ] || continue
@@ -146,27 +146,19 @@ jobs:
           fi
 
           if [ "${xml_ok}" = "true" ]; then
-            PREV_COUNT="$(count_offers_in_dir "$TARGET")"
-            NEW_COUNT="$(count_offers_in_dir "$STAGING")"
-            echo "Asari sanity-check: poprzednio=${PREV_COUNT}, nowy eksport=${NEW_COUNT}"
-
+            NEW_COUNT="$(count_new_offers "$STAGING")"
+            echo "Asari: nowy eksport zawiera ${NEW_COUNT} ofert(y) do scalenia."
             if [ "${NEW_COUNT}" -eq 0 ]; then
-              echo "::warning::Nowy eksport Asari ma 0 ofert — pomijam podmianę (zostaje poprzedni stan)."
+              echo "::warning::Nowy eksport Asari ma 0 ofert — pomijam (zostaje poprzedni stan)."
               xml_ok="false"
-            elif [ "${PREV_COUNT}" -gt 0 ]; then
-              MIN_ALLOWED=$(( (PREV_COUNT * 70 + 99) / 100 ))
-              if [ "${NEW_COUNT}" -lt "${MIN_ALLOWED}" ]; then
-                echo "::warning::Nowy eksport Asari wygląda na niepełny (${NEW_COUNT} < 70% z ${PREV_COUNT}) — pomijam podmianę."
-                xml_ok="false"
-              fi
             fi
           fi
 
           if [ "${xml_ok}" = "true" ]; then
-            rm -rf "$TARGET"
-            mkdir -p "$TARGET"
-            rsync -a --delete "${STAGING}/" "${TARGET}/"
-            echo "Pobrano asari-export (SSH) i zaakceptowano sanity-check."
+            # Asari eksportuje przyrostowo — scalamy nowe pliki z istniejącymi w repo,
+            # nie zastępujemy całości (bez --delete, żeby zachować historyczne paczki XML).
+            rsync -a "${STAGING}/" "${TARGET}/"
+            echo "Scalono nowy eksport Asari z asari-export/ (${NEW_COUNT} nowych ofert)."
             if [ "${foto_ok}" != "true" ]; then
               echo "::warning::XML pobrany, ale zdjęcia nie zostały odświeżone (zostaną poprzednie)."
             fi
