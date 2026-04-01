@@ -26,6 +26,7 @@ type LightboxProps = {
   onClose: () => void;
   onPrev: () => void;
   onNext: () => void;
+  title?: string;
 };
 
 function Lightbox({
@@ -34,6 +35,7 @@ function Lightbox({
   onClose,
   onPrev,
   onNext,
+  title = "",
 }: LightboxProps) {
   const [mounted, setMounted] = useState(false);
   const [overlayIn, setOverlayIn] = useState(false);
@@ -380,6 +382,7 @@ export default function PropertyGallery({
             onClose={close}
             onPrev={goPrevLightbox}
             onNext={goNextLightbox}
+            title={title}
           />
         ) : null}
       </>

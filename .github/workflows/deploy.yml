@@ -95,8 +95,8 @@ jobs:
           mkdir -p "$STAGING" "$STAGING/foto"
           mkdir -p "$TARGET" "$TARGET/foto"
 
-          XML_DIR="${ASARI_REMOTE_XML_DIR#/}"
-          FOTO_DIR="${ASARI_REMOTE_FOTO_DIR#/}"
+          XML_DIR="$(printf '%s' "${ASARI_REMOTE_XML_DIR}" | tr -d '\r\n' | sed 's#^/##')"
+          FOTO_DIR="$(printf '%s' "${ASARI_REMOTE_FOTO_DIR}" | tr -d '\r\n' | sed 's#^/##')"
           ASARI_SSH_HOST_CLEAN="$(printf '%s' "${ASARI_SSH_HOST}" | tr -d '\r\n')"
           ASARI_SSH_USER_CLEAN="$(printf '%s' "${ASARI_SSH_USER}" | tr -d '\r\n')"
           ASARI_SSH_PASS_CLEAN="$(printf '%s' "${ASARI_SSH_PASS}" | tr -d '\r\n')"
