@@ -11,9 +11,10 @@ import { PLACEHOLDER_IMG } from "@/lib/asari/placeholderImg";
 import { photoNameFromApiUrl } from "@/lib/asari/photoUrl";
 import { offerJsonLd } from "@/lib/seo/offerJsonLd";
 import { canonicalUrl } from "@/lib/seo/site";
+import { sanitizeHtml } from "@/lib/sanitizeHtml";
 import { notFound } from "next/navigation";
 
-const OG_FALLBACK_IMAGE = "/hero-biuro.jpg.png";
+const OG_FALLBACK_IMAGE = "/hero-biuro.jpg";
 
 /** Akapity z czystego tekstu — najpierw podwójny enter z XML, inaczej pojedyncze linie. */
 function splitDescriptionPlain(raw: string): string[] {
@@ -106,7 +107,7 @@ export default async function OfertaSinglePage({ params }: Props) {
             },
           ]
         : [];
-  const descriptionRaw = (o.descriptionHtml ?? "").trim();
+  const descriptionRaw = sanitizeHtml((o.descriptionHtml ?? "").trim());
   const descriptionHasHtml = /<\/?[a-z][\s\S]*>/i.test(descriptionRaw);
   const descriptionParagraphs = descriptionHasHtml
     ? []
@@ -118,13 +119,14 @@ export default async function OfertaSinglePage({ params }: Props) {
         images={imagesForGallery}
         variant="detail"
         heroClassName="max-w-none sm:max-w-none mx-0"
+        title={o.title}
       />
     ) : (
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-zinc-100 ring-1 ring-zinc-200/80">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={o.mainImageSrc ?? PLACEHOLDER_IMG}
-          alt=""
+          alt={o.title}
           className="h-full w-full object-cover"
         />
       </div>

@@ -9,7 +9,7 @@ export const organizationJsonLd = {
   url: canonicalUrl(""),
   telephone: "+48501769166",
   email: "biuro@dan-dom.pl",
-  image: `${SITE_URL}/hero-biuro.jpg.png`,
+  image: `${SITE_URL}/hero-biuro.jpg`,
   logo: `${SITE_URL}/icon-512.png`,
   description:
     "Biuro nieruchomości z ponad 28-letnim doświadczeniem. Sprzedaż, zakup i wynajem nieruchomości w Wągrowcu i Rogoźnie.",

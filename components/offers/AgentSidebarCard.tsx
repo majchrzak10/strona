@@ -89,7 +89,7 @@ export default function AgentSidebarCard({
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={imageSrc!}
-            alt=""
+            alt={displayName}
             className="h-full w-full object-cover"
             onError={() => setPhotoFailed(true)}
           />
@@ -153,7 +153,7 @@ export default function AgentSidebarCard({
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={imageSrc!}
-              alt=""
+              alt={displayName}
               className="h-full w-full object-cover"
               onError={() => setPhotoFailed(true)}
             />

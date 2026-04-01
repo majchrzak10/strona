@@ -71,7 +71,7 @@ export default async function RecentOffersSection() {
                     <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
                       <Image
                         src={imgSrc}
-                        alt=""
+                        alt={offer.title}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 520px"

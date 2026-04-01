@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       "Skuteczna sprzedaż mieszkań, domów i działek. Bezpłatna wycena, pomoc w formalnościach i negocjacjach.",
     images: [
       {
-        url: "/hero-biuro.jpg.png",
+        url: "/hero-biuro.jpg",
         width: 1200,
         height: 800,
         alt: "Dan-Dom Nieruchomości — sprzedaż nieruchomości",

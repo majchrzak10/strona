@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     url: canonicalUrl(""),
     images: [
       {
-        url: "/hero-biuro.jpg.png",
+        url: "/hero-biuro.jpg",
         width: 1200,
         height: 800,
         alt: "Zespół Dan-Dom Nieruchomości",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: defaultTitle,
     description: defaultDescription,
-    images: ["/hero-biuro.jpg.png"],
+    images: ["/hero-biuro.jpg"],
   },
   robots: SITE_INDEXABLE
     ? { index: true, follow: true }

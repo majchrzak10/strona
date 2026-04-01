@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description: "Bezpłatna wycena mieszkań, domów i działek. Realna wartość rynkowa przed sprzedażą lub wynajmem.",
     images: [
       {
-        url: "/hero-biuro.jpg.png",
+        url: "/hero-biuro.jpg",
         width: 1200,
         height: 800,
         alt: "Dan-Dom Nieruchomości — wycena nieruchomości",

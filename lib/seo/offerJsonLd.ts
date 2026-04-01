@@ -35,7 +35,7 @@ export function offerJsonLd({ offer }: OfferJsonLdInput) {
       name: offer.title,
       category: offer.category,
       description: `${offer.transaction} · ${offer.locationLabel} · ${offer.areaLabel}`.trim(),
-      image: primaryImage ?? images[0] ?? `${SITE_URL}/hero-biuro.jpg.png`,
+      image: primaryImage ?? images[0] ?? `${SITE_URL}/hero-biuro.jpg`,
       sku: offer.signature,
       brand: {
         "@type": "Brand",

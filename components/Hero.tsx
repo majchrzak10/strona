@@ -10,7 +10,7 @@ export default function Hero() {
       {/* Warstwa obrazu: min. wysokość na mobile, na md+ szeroki baner 16/7 */}
       <div className="relative w-full min-h-[65dvh] md:min-h-0 md:aspect-[16/7]">
         <Image
-          src="/hero-biuro.jpg.png"
+          src="/hero-biuro.jpg"
           alt="Zespół Dan-Dom Nieruchomości"
           fill
           priority

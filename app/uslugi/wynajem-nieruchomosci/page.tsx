@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     description: "Wynajem mieszkań, domów i lokali. Weryfikacja najemcy, bezpieczna umowa najmu, pełna obsługa.",
     images: [
       {
-        url: "/hero-biuro.jpg.png",
+        url: "/hero-biuro.jpg",
         width: 1200,
         height: 800,
         alt: "Dan-Dom Nieruchomości — wynajem nieruchomości",

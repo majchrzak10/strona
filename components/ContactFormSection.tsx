@@ -9,7 +9,7 @@ import { trackEvent } from "@/lib/client/analytics";
 import { SITE_URL } from "@/lib/seo/site";
 import { contactFormSchema } from "@/lib/validation/contactForm";
 
-const labelClass = "mb-0.5 block text-[11px] font-semibold uppercase tracking-wide text-zinc-500";
+const labelClass = "mb-0.5 block text-[11px] font-semibold uppercase tracking-wide text-zinc-700";
 
 function fieldClass(extra = ""): string {
   return [

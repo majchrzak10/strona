@@ -71,6 +71,12 @@ export default function Navbar() {
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand-primary focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        Przejdź do treści
+      </a>
       <header className="sticky top-0 z-50 bg-neutral-50 pt-[env(safe-area-inset-top,0px)] shadow-[0_1px_0_rgba(0,0,0,0.06)]">
         <div className="mx-auto w-full max-w-[1600px] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-6 lg:px-8">
           <div className="flex h-[4.25rem] items-center justify-between sm:h-[4.5rem]">
@@ -95,6 +101,7 @@ export default function Navbar() {
                 <Link
                   key={l.href}
                   href={l.href}
+                  aria-current={pathname === l.href ? "page" : undefined}
                   className="text-base font-semibold text-black/80 transition-colors hover:text-black"
                 >
                   {l.label}

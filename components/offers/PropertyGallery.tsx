@@ -182,7 +182,7 @@ function Lightbox({
           <img
             key={item.name}
             src={srcFor(item)}
-            alt=""
+            alt={title ? `${title} — zdjęcie ${index + 1}` : `Zdjęcie ${index + 1}`}
             className={`max-h-[min(78vh,100%)] max-w-full object-contain transition-transform duration-300 ease-out ${
               imgIn ? "scale-100" : "scale-95"
             }`}
@@ -209,12 +209,15 @@ type Props = {
   variant?: "detail" | "carousel";
   /** Np. `max-w-none` gdy galeria ma wypełnić kolumnę siatki 50/50. */
   heroClassName?: string;
+  /** Tytuł oferty — używany jako alt tekst zdjęć. */
+  title?: string;
 };
 
 export default function PropertyGallery({
   images,
   variant = "carousel",
   heroClassName = "",
+  title = "",
 }: Props) {
   const sorted = [...images].sort((a, b) => a.weight - b.weight);
   const n = sorted.length;
@@ -273,7 +276,7 @@ export default function PropertyGallery({
             <img
               key={current.name}
               src={srcFor(current)}
-              alt=""
+              alt={title ? `${title} — zdjęcie ${heroIndex + 1}` : `Zdjęcie ${heroIndex + 1}`}
               className="h-full w-full object-cover"
             />
             <button
@@ -361,7 +364,7 @@ export default function PropertyGallery({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={srcFor(im)}
-                    alt=""
+                    alt={title ? `${title} — miniatura ${i + 1}` : `Miniatura ${i + 1}`}
                     className="h-full w-full object-cover"
                   />
                 </button>
@@ -402,7 +405,7 @@ export default function PropertyGallery({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={srcFor(im)}
-                alt=""
+                alt={title ? `${title} — zdjęcie ${sorted.indexOf(im) + 1}` : `Zdjęcie ${sorted.indexOf(im) + 1}`}
                 className="h-full w-full object-cover"
               />
             </div>
