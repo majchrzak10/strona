@@ -46,7 +46,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   SSH_PORT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.sftp_port != '' && github.event.inputs.sftp_port || (vars.SFTP_PORT != '' && vars.SFTP_PORT || '222') }}
@@ -157,10 +157,23 @@ jobs:
           if [ "${xml_ok}" = "true" ]; then
             # Asari eksportuje przyrostowo — scalamy nowe pliki z istniejącymi w repo,
             # nie zastępujemy całości (bez --delete, żeby zachować historyczne paczki XML).
-            rsync -a "${STAGING}/" "${TARGET}/"
+            rsync -a --exclude='foto/' "${STAGING}/" "${TARGET}/"
             echo "Scalono nowy eksport Asari z asari-export/ (${NEW_COUNT} nowych ofert)."
             if [ "${foto_ok}" != "true" ]; then
               echo "::warning::XML pobrany, ale zdjęcia nie zostały odświeżone (zostaną poprzednie)."
+            fi
+
+            # Zapisz nowe pliki XML do repo żeby kolejny run startował z aktualnym stanem.
+            cd "$GITHUB_WORKSPACE"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add asari-export/
+            if git diff --cached --quiet; then
+              echo "Brak nowych plików XML do commitu."
+            else
+              git commit -m "chore(asari): aktualizacja eksportu XML [skip ci]"
+              git push origin HEAD
+              echo "Zapisano nowe pliki XML do repo."
             fi
           else
             echo "::warning::Nie udało się pobrać Asari z serwera po SSH. Używam asari-export/ z repo."
