@@ -207,6 +207,7 @@ jobs:
           REMOTE="${REMOTE_PATH%/}"
           echo "rsync → ${SSH_USER_CLEAN}@${SSH_HOST_CLEAN}:${REMOTE}/ (port ${SSH_PORT_CLEAN})"
           SSHPASS="${SSHPASS_CLEAN}" sshpass -e rsync -avz --delete \
+            --exclude=asari2 \
             -e "ssh -l '${SSH_USER_CLEAN}' -p ${SSH_PORT_CLEAN} -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
             ./out/ "${SSH_HOST_CLEAN}:${REMOTE}/"
 
@@ -228,6 +229,7 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           REMOTE="${REMOTE_PATH%/}"
           rsync -avz --delete \
+            --exclude=asari2 \
             -e "ssh -l '${SSH_USER_CLEAN}' -p ${SSH_PORT_CLEAN} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new -o ConnectTimeout=60" \
             ./out/ "${SSH_HOST_CLEAN}:${REMOTE}/"
           rm -f ~/.ssh/deploy_key
