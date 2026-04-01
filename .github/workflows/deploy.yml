@@ -77,8 +77,8 @@ jobs:
           ASARI_SSH_USER: ${{ secrets.FTP_USERNAME }}
           ASARI_SSH_PASS: ${{ secrets.FTP_PASSWORD }}
           ASARI_SSH_PORT: ${{ secrets.ASARI_SSH_PORT || vars.ASARI_SSH_PORT || vars.SFTP_PORT || '222' }}
-          ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || 'public_html/asari2' }}
-          ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || 'public_html/asari2/foto' }}
+          ASARI_REMOTE_XML_DIR: ${{ vars.ASARI_REMOTE_XML_DIR || 'domains/dan-dom.pl/public_html/asari2' }}
+          ASARI_REMOTE_FOTO_DIR: ${{ vars.ASARI_REMOTE_FOTO_DIR || 'domains/dan-dom.pl/public_html/asari2/foto' }}
         run: |
           set -euo pipefail
           if [ -z "${ASARI_SSH_HOST:-}" ] || [ -z "${ASARI_SSH_USER:-}" ] || [ -z "${ASARI_SSH_PASS:-}" ]; then
