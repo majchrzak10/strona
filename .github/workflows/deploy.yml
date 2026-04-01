@@ -87,6 +87,24 @@ jobs:
           fi
 
           sudo apt-get update -qq
+          sudo apt-get install -y -qq sshpass openssh-client
+
+          HOST_CLEAN="$(printf '%s' "${ASARI_SSH_HOST}" | tr -d '\r\n')"
+          USER_CLEAN="$(printf '%s' "${ASARI_SSH_USER}" | tr -d '\r\n')"
+          PASS_CLEAN="$(printf '%s' "${ASARI_SSH_PASS}" | tr -d '\r\n')"
+          PORT_CLEAN="$(printf '%s' "${ASARI_SSH_PORT}" | tr -d '\r\n')"
+
+          echo "=== DIAGNOSTYKA SSH — struktura katalogów ==="
+          SSHPASS="${PASS_CLEAN}" sshpass -e ssh \
+            -l "${USER_CLEAN}" -p "${PORT_CLEAN}" \
+            -o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 \
+            "${HOST_CLEAN}" \
+            'echo "HOME: $HOME"; echo "PWD: $(pwd)"; echo "--- katalog domowy ---"; ls -la ~/ 2>/dev/null | head -30; echo "--- public_html (jesli istnieje) ---"; ls -la ~/public_html/ 2>/dev/null | head -20 || echo "brak ~/public_html"; echo "--- domains (jesli istnieje) ---"; ls -la ~/domains/ 2>/dev/null | head -20 || echo "brak ~/domains"' \
+            || echo "::warning::SSH diagnostyka nie powiodla sie"
+          echo "=== KONIEC DIAGNOSTYKI ==="
+          exit 0
+
+          sudo apt-get update -qq
           sudo apt-get install -y -qq rsync sshpass openssh-client
 
           TARGET="$GITHUB_WORKSPACE/asari-export"
