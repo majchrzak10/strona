@@ -4,7 +4,7 @@ type ServiceJsonLdOptions = {
   name: string;
   description: string;
   url: string;
-  areaName: string;
+  areaName: string | string[];
 };
 
 /**
@@ -26,10 +26,9 @@ export function serviceJsonLd({ name, description, url, areaName }: ServiceJsonL
       telephone: "+48501769166",
       email: "biuro@dan-dom.pl",
     },
-    areaServed: {
-      "@type": "City",
-      name: areaName,
-    },
+    areaServed: Array.isArray(areaName)
+      ? areaName.map((n) => ({ "@type": "City" as const, name: n }))
+      : { "@type": "City" as const, name: areaName },
     serviceType: "Pośrednictwo w obrocie nieruchomościami",
     availableChannel: {
       "@type": "ServiceChannel",

@@ -8,7 +8,7 @@ export default function NieruchomosciListingHeading() {
   const isRent = typ === "wynajem";
   return (
     <h1 className="mt-3 font-[var(--font-playfair)] text-[clamp(1.35rem,4.5vw,2.25rem)] font-bold leading-tight text-black lg:text-4xl">
-      {isRent ? "Nieruchomości na wynajem" : "Nieruchomości na sprzedaż"}
+      {isRent ? "Nieruchomości na wynajem — Wągrowiec i Rogoźno" : "Nieruchomości na sprzedaż — Wągrowiec i Rogoźno"}
     </h1>
   );
 }

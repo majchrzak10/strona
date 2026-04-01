@@ -42,7 +42,7 @@ const service = serviceJsonLd({
   description:
     "Bezpłatna wstępna wycena mieszkań, domów, działek i lokali użytkowych. Analiza lokalnego rynku i rekomendacja ceny przed sprzedażą lub wynajmem.",
   url: PAGE_URL,
-  areaName: "Wągrowiec",
+  areaName: ["Wągrowiec", "Rogoźno"],
 });
 
 const faq = faqJsonLd("wycena-nieruchomosci", [
