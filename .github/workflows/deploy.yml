@@ -175,6 +175,13 @@ jobs:
               git push origin HEAD
               echo "Zapisano nowe pliki XML do repo."
             fi
+
+            # Skopiuj nowe zdjęcia do asari-export/foto/ na potrzeby tego buildu.
+            # Nie commitujemy zdjęć do repo (duże pliki), ale muszą być dostępne dla copy-photos.mjs.
+            if [ "${foto_ok}" = "true" ] && [ -d "${STAGING}/foto" ]; then
+              rsync -a "${STAGING}/foto/" "${TARGET}/foto/"
+              echo "Zsynchronizowano zdjęcia Asari dla buildu ($(ls "${TARGET}/foto/" | wc -l) plików)."
+            fi
           else
             echo "::warning::Nie udało się pobrać Asari z serwera po SSH. Używam asari-export/ z repo."
           fi
