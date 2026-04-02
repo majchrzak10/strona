@@ -27,28 +27,9 @@ export default function Hero() {
           className="pointer-events-auto flex w-full flex-col items-start justify-start px-[max(1rem,env(safe-area-inset-left))] pt-[max(4rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 md:pt-20"
         >
           <div className="mx-auto flex w-full min-w-0 max-w-[min(100%,28rem)] flex-col items-center text-center pb-8 md:pb-12">
-            {/* Ikona domu (inline SVG — przezroczyste tło, biała) */}
-            <svg
-              aria-hidden="true"
-              viewBox="96 96 320 320"
-              className="mb-2 w-[clamp(44px,10vw,60px)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
-              fill="none"
-            >
-              {/* dach */}
-              <path fill="white" d="M256 96 96 240h320L256 96z"/>
-              {/* ściany */}
-              <rect x="136" y="240" width="240" height="176" rx="10" fill="white" fillOpacity="0.92"/>
-              {/* drzwi */}
-              <rect x="210" y="300" width="92" height="116" rx="8" fill="#2f0811"/>
-            </svg>
-
-            <h1 className="max-w-full font-sans text-[clamp(1.6rem,5.5vw,2.4rem)] font-bold leading-[1.15] tracking-tight text-white drop-shadow-sm">
-              Dan-Dom
-            </h1>
-
-            <p className="mt-1.5 text-[clamp(0.65rem,2.4vw,0.8rem)] font-semibold uppercase tracking-[0.22em] text-white/65">
+            <h1 className="text-[clamp(0.625rem,2.5vw,0.6875rem)] font-semibold uppercase tracking-[0.25em] text-white/70">
               Biuro Nieruchomości · od 1996 roku
-            </p>
+            </h1>
 
             <p className="mt-3 max-w-sm text-[clamp(0.8125rem,2.8vw,0.9375rem)] leading-relaxed text-white/80 drop-shadow-sm md:max-w-md">
               Kompleksowa obsługa sprzedaży, zakupu i wynajmu nieruchomości w Wągrowcu i Rogoźnie.
