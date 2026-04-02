@@ -1,5 +1,7 @@
 # GitHub Actions → CyberFolks (SFTP)
 
+**Powiazane:** pelny przepływ Asari (XML, zdjecia, `asari-export`, `public/zdjecia`, rsync) — `docs/ASARI_EKSPORT_I_DEPLOY.md`.
+
 Przy **pushu na `main` lub `master`** (albo **Actions → Deploy — CyberFolks (SFTP) → Run workflow**) GitHub buduje stronę (`npm run build` → `out/`) i wgrywa ją na hosting przez **SFTP**.
 
 ## CyberFolks — SSH włączone (typowe parametry)
