@@ -11,7 +11,7 @@ import {
   type SortKey,
   type TransactionTypeKey,
 } from "@/lib/asari/filterOffers";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const PAGE_SIZE = 12;
@@ -81,8 +81,6 @@ type Props = {
 };
 
 export default function FilteredOffersGrid({ offers }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const q = useMemo(() => parseQuery(searchParams), [searchParams]);
@@ -123,10 +121,9 @@ export default function FilteredOffersGrid({ offers }: Props) {
   const pushQuery = useCallback(
     (next: OfferFilterQuery) => {
       const s = buildSearchParams(next);
-      const url = s ? `${pathname}?${s}` : pathname;
-      router.replace(url, { scroll: false });
+      window.history.replaceState(null, "", s ? `?${s}` : "?");
     },
-    [pathname, router],
+    [],
   );
 
   const reset = useCallback(() => {
@@ -141,8 +138,8 @@ export default function FilteredOffersGrid({ offers }: Props) {
       sort: q.sort,
     };
     const s = buildSearchParams(next);
-    router.replace(s ? `${pathname}?${s}` : pathname, { scroll: false });
-  }, [pathname, router, q.typ, q.sort]);
+    window.history.replaceState(null, "", s ? `?${s}` : "?");
+  }, [q.typ, q.sort]);
 
   const applyPriceFromInputs = useCallback(() => {
     const minV = minDraft.trim() === "" ? null : Number(minDraft.replace(/\s/g, ""));
