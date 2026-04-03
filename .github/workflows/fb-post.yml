@@ -57,24 +57,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Pobierz aktualny stan z remote i połącz z lokalnym (unika konfliktów)
+          # Zachowaj lokalny state.json (z nowym wpisem), potem sync do remote HEAD
+          cp automation/fb-post/state.json /tmp/local-state.json
           git fetch origin
+          git reset --hard origin/main
+
+          # Scal: remote jako baza + nowe wpisy z lokalnego
           node -e "
             const fs = require('fs');
-            const { execSync } = require('child_process');
-            const local = JSON.parse(fs.readFileSync('automation/fb-post/state.json', 'utf8'));
-            let remote = { entries: [] };
-            try {
-              const raw = execSync('git show origin/main:automation/fb-post/state.json').toString();
-              remote = JSON.parse(raw);
-            } catch {}
-            const seen = new Set(remote.entries.map(e => e.signature + '|' + e.status));
+            const base = JSON.parse(fs.readFileSync('automation/fb-post/state.json', 'utf8'));
+            const local = JSON.parse(fs.readFileSync('/tmp/local-state.json', 'utf8'));
+            const seen = new Set(base.entries.map(e => e.signature + '|' + e.status));
             for (const e of local.entries) {
-              if (!seen.has(e.signature + '|' + e.status)) {
-                remote.entries.push(e);
-              }
+              if (!seen.has(e.signature + '|' + e.status)) base.entries.push(e);
             }
-            fs.writeFileSync('automation/fb-post/state.json', JSON.stringify(remote, null, 2) + '\n');
+            fs.writeFileSync('automation/fb-post/state.json', JSON.stringify(base, null, 2) + '\n');
           "
 
           git add automation/fb-post/state.json
