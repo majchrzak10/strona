@@ -61,5 +61,6 @@ jobs:
             echo "Brak zmian w state.json."
           else
             git commit -m "chore(fb): draft_sent $(date -u +%Y-%m-%d) [skip ci]"
+            git pull --rebase origin HEAD
             git push origin HEAD
           fi
