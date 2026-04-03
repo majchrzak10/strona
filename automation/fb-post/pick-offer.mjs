@@ -202,7 +202,7 @@ function loadOffers(dataDir) {
       locationLabel,
       priceLabel,
       areaLabel,
-      offerUrl: `${SITE_URL}/nieruchomosci/${slug}`,
+      offerUrl: `${SITE_URL}/oferty/${slug}/`,
       photoUrls,
       listedAtMs: parseListedAtMs(pm),
     };
