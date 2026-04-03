@@ -1,0 +1,65 @@
+# =============================================================================
+# FB Post — wybór oferty Asari i wysyłka draftu do Make.com (Telegram → Facebook)
+#
+# Wymagane sekrety (Settings → Secrets and variables → Actions):
+#   MAKE_WEBHOOK_URL  — URL webhooka Make.com (scenariusz Webhook → Telegram → FB)
+#
+# Opcjonalne zmienne (Settings → Variables):
+#   SITE_URL          — domyślnie https://dan-dom.pl
+#
+# Plik stanu: automation/fb-post/state.json (commitowany automatycznie po wysyłce)
+# Skrypt:     automation/fb-post/pick-offer.mjs
+# =============================================================================
+
+name: FB Post — wybór oferty
+
+on:
+  schedule:
+    - cron: "0 9 */2 * *"   # co 2 dni o 9:00 UTC (11:00 czasu polskiego latem)
+  workflow_dispatch:         # możliwość ręcznego uruchomienia
+
+concurrency:
+  group: fb-post
+  cancel-in-progress: false  # nie przerywaj trwającego wysyłania
+
+permissions:
+  contents: write            # potrzebne do commitu state.json
+
+jobs:
+  pick-and-send:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Pobieranie kodu
+        uses: actions/checkout@v6
+
+      - name: Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalacja zależności
+        run: npm ci
+
+      - name: Wybierz ofertę i wyślij do Make
+        env:
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+          ASARI_DATA_DIR: ${{ github.workspace }}/asari-export
+          SITE_URL: ${{ vars.SITE_URL || 'https://dan-dom.pl' }}
+        run: node automation/fb-post/pick-offer.mjs
+
+      - name: Zapisz stan do repozytorium
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add automation/fb-post/state.json
+          if git diff --cached --quiet; then
+            echo "Brak zmian w state.json."
+          else
+            git commit -m "chore(fb): draft_sent $(date -u +%Y-%m-%d) [skip ci]"
+            git push origin HEAD
+          fi
