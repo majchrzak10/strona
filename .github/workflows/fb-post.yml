@@ -51,33 +51,73 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL || 'https://dan-dom.pl' }}
         run: node automation/fb-post/pick-offer.mjs
 
-      - name: Zapisz stan do repozytorium
+      - name: Zapisz stan do repozytorium (GitHub API)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Zachowaj lokalny state.json (z nowym wpisem), potem sync do remote HEAD
-          cp automation/fb-post/state.json /tmp/local-state.json
-          git fetch origin
-          git reset --hard origin/main
-
-          # Scal: remote jako baza + nowe wpisy z lokalnego
           node -e "
+            const https = require('https');
             const fs = require('fs');
-            const base = JSON.parse(fs.readFileSync('automation/fb-post/state.json', 'utf8'));
-            const local = JSON.parse(fs.readFileSync('/tmp/local-state.json', 'utf8'));
-            const seen = new Set(base.entries.map(e => e.signature + '|' + e.status));
-            for (const e of local.entries) {
-              if (!seen.has(e.signature + '|' + e.status)) base.entries.push(e);
-            }
-            fs.writeFileSync('automation/fb-post/state.json', JSON.stringify(base, null, 2) + '\n');
-          "
+            const local = JSON.parse(fs.readFileSync('automation/fb-post/state.json', 'utf8'));
+            const token = process.env.GH_TOKEN;
+            const repo = process.env.REPO;
 
-          git add automation/fb-post/state.json
-          if git diff --cached --quiet; then
-            echo "Brak zmian w state.json."
-          else
-            git commit -m "chore(fb): draft_sent $(date -u +%Y-%m-%d) [skip ci]"
-            git push origin HEAD:main
-          fi
+            function req(method, path, body) {
+              return new Promise((resolve, reject) => {
+                const data = body ? JSON.stringify(body) : null;
+                const r = https.request({
+                  hostname: 'api.github.com', path, method,
+                  headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Accept': 'application/vnd.github+json',
+                    'User-Agent': 'github-actions',
+                    'Content-Type': 'application/json',
+                    'X-GitHub-Api-Version': '2022-11-28',
+                    ...(data ? { 'Content-Length': Buffer.byteLength(data) } : {})
+                  }
+                }, res => {
+                  let b = '';
+                  res.on('data', c => b += c);
+                  res.on('end', () => resolve({ status: res.statusCode, body: JSON.parse(b) }));
+                });
+                r.on('error', reject);
+                if (data) r.write(data);
+                r.end();
+              });
+            }
+
+            async function main() {
+              const filePath = '/repos/' + repo + '/contents/automation/fb-post/state.json';
+              const { status, body } = await req('GET', filePath);
+              let remote = { entries: [] };
+              let sha = null;
+              if (status === 200) {
+                remote = JSON.parse(Buffer.from(body.content, 'base64').toString('utf8'));
+                sha = body.sha;
+              }
+              const seen = new Set(remote.entries.map(e => e.signature + '|' + e.status));
+              let changed = false;
+              for (const e of local.entries) {
+                if (!seen.has(e.signature + '|' + e.status)) {
+                  remote.entries.push(e);
+                  changed = true;
+                }
+              }
+              if (!changed) { console.log('[fb-state] Brak nowych wpisów.'); return; }
+              const newContent = JSON.stringify(remote, null, 2) + '\n';
+              const putBody = {
+                message: 'chore(fb): draft_sent ' + new Date().toISOString().slice(0,10) + ' [skip ci]',
+                content: Buffer.from(newContent).toString('base64'),
+                ...(sha ? { sha } : {})
+              };
+              const { status: s } = await req('PUT', filePath, putBody);
+              if (s === 200 || s === 201) {
+                console.log('[fb-state] Zapisano state.json.');
+              } else {
+                console.error('[fb-state] Błąd zapisu:', s);
+                process.exit(1);
+              }
+            }
+            main().catch(e => { console.error(e); process.exit(1); });
+          "
