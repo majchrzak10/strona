@@ -44,12 +44,13 @@ jobs:
       - name: Instalacja zależności
         run: npm ci
 
-      - name: Wybierz ofertę i wyślij do Make
+      - name: Wybierz treść i wyślij do Make
         env:
           MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ASARI_DATA_DIR: ${{ github.workspace }}/asari-export
           SITE_URL: ${{ vars.SITE_URL || 'https://dan-dom.pl' }}
-        run: node automation/fb-post/pick-offer.mjs
+        run: node automation/fb-post/pick-content.mjs
 
       - name: Zapisz stan do repozytorium (GitHub API)
         env:
