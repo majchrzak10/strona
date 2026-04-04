@@ -26,8 +26,6 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [desktopDropdownOpen, setDesktopDropdownOpen] = useState(false);
   const [desktopServicesOpen, setDesktopServicesOpen] = useState(false);
-  const [mobilePropertyOpen, setMobilePropertyOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const servicesDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -57,14 +55,10 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
-    setMobilePropertyOpen(false);
-    setMobileServicesOpen(false);
   }, [pathname]);
 
   function closeMobile() {
     setMobileOpen(false);
-    setMobilePropertyOpen(false);
-    setMobileServicesOpen(false);
     setDesktopDropdownOpen(false);
     setDesktopServicesOpen(false);
   }
@@ -282,36 +276,24 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Mobile akordeon — Nieruchomości */}
-          <div className="mt-1 border-t border-transparent">
-            <button
-              type="button"
-              aria-expanded={mobilePropertyOpen}
-              aria-controls="mobile-property-submenu"
-              onClick={() => setMobilePropertyOpen((v) => !v)}
-              className="flex min-h-[48px] w-full touch-manipulation items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
-            >
+          {/* Mobile akordeon — Nieruchomości (natywny details/summary, działa bez JS) */}
+          <details className="group mt-1">
+            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between rounded-lg px-3 py-3 text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary [&::-webkit-details-marker]:hidden">
               Nieruchomości
               <svg
                 aria-hidden="true"
-                className={`h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 ${mobilePropertyOpen ? "rotate-180" : ""}`}
+                className="h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 group-open:rotate-180"
                 viewBox="0 0 24 24"
                 fill="none"
               >
                 <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </button>
-
-            <div
-              id="mobile-property-submenu"
-              className={`${mobilePropertyOpen ? "block" : "hidden"} relative z-10 mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50`}
-            >
+            </summary>
+            <div className="mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
               {PROPERTY_LINKS.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  prefetch
-                  scroll
                   onClick={closeMobile}
                   className="flex min-h-[48px] items-center px-4 py-3 text-[0.95rem] font-medium text-zinc-800 transition-colors hover:bg-brand-primary/10 hover:text-brand-primary active:bg-brand-primary/15"
                 >
@@ -319,32 +301,22 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
-          </div>
+          </details>
 
-          {/* Mobile akordeon — Usługi */}
-          <div className="mt-1">
-            <button
-              type="button"
-              aria-expanded={mobileServicesOpen}
-              aria-controls="mobile-services-submenu"
-              onClick={() => setMobileServicesOpen((v) => !v)}
-              className="flex min-h-[48px] w-full touch-manipulation items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
-            >
+          {/* Mobile akordeon — Usługi (natywny details/summary, działa bez JS) */}
+          <details className="group mt-1">
+            <summary className="flex min-h-[48px] cursor-pointer list-none items-center justify-between rounded-lg px-3 py-3 text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary [&::-webkit-details-marker]:hidden">
               Usługi
               <svg
                 aria-hidden="true"
-                className={`h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 ${mobileServicesOpen ? "rotate-180" : ""}`}
+                className="h-5 w-5 shrink-0 text-brand-primary transition-transform duration-200 group-open:rotate-180"
                 viewBox="0 0 24 24"
                 fill="none"
               >
                 <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </button>
-
-            <div
-              id="mobile-services-submenu"
-              className={`${mobileServicesOpen ? "block" : "hidden"} relative z-10 mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50`}
-            >
+            </summary>
+            <div className="mt-1 overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
               {SERVICE_LINKS.map((l) => (
                 <Link
                   key={l.href}
@@ -356,7 +328,7 @@ export default function Navbar() {
                 </Link>
               ))}
             </div>
-          </div>
+          </details>
 
           <div className="mt-auto border-t border-zinc-100 pt-6">
             <Link
