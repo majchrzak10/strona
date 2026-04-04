@@ -233,11 +233,21 @@ export default function Navbar() {
       </header>
 
       {mobileOpen && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/40 md:hidden"
-          aria-hidden="true"
-          onClick={closeMobile}
-        />
+        <>
+          {/* Wizualne ściemnienie — cały ekran, bez przechwytywania kliknięć */}
+          <div
+            className="fixed inset-0 z-[100] bg-black/40 md:hidden"
+            aria-hidden="true"
+            style={{ pointerEvents: "none" }}
+          />
+          {/* Klikalna strefa zamknięcia — tylko obszar poza szufladą */}
+          <div
+            className="fixed inset-y-0 left-0 z-[105] cursor-pointer md:hidden"
+            style={{ right: "min(18rem, 85vw)" }}
+            onClick={closeMobile}
+            aria-hidden="true"
+          />
+        </>
       )}
 
       <div
@@ -281,7 +291,7 @@ export default function Navbar() {
               aria-expanded={mobilePropertyOpen}
               aria-controls="mobile-property-submenu"
               onClick={() => setMobilePropertyOpen((v) => !v)}
-              className="flex min-h-[48px] w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
+              className="flex min-h-[48px] w-full touch-manipulation items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
             >
               Nieruchomości
               <svg
@@ -320,7 +330,7 @@ export default function Navbar() {
               aria-expanded={mobileServicesOpen}
               aria-controls="mobile-services-submenu"
               onClick={() => setMobileServicesOpen((v) => !v)}
-              className="flex min-h-[48px] w-full items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
+              className="flex min-h-[48px] w-full touch-manipulation items-center justify-between rounded-lg px-3 py-3 text-left text-[1.05rem] font-semibold text-zinc-800 transition-colors hover:bg-zinc-50 hover:text-brand-primary"
             >
               Usługi
               <svg

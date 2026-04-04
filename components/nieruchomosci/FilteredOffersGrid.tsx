@@ -181,7 +181,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
                         : q.pok,
                   })
                 }
-                className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                className={`min-h-[44px] rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
                   q.kat === opt.key
                     ? "bg-brand-primary text-white"
                     : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50"
@@ -243,7 +243,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
                   key={label}
                   type="button"
                   onClick={() => pushQuery({ ...q, pok: v })}
-                  className={`min-h-[40px] min-w-[2.5rem] rounded-lg px-2.5 text-sm font-semibold transition-colors ${
+                  className={`min-h-[44px] min-w-[2.5rem] rounded-lg px-2.5 text-sm font-semibold transition-colors ${
                     (v == null && q.pok == null) || v === q.pok
                       ? "bg-brand-primary text-white"
                       : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50"
@@ -281,7 +281,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
             <button
               type="button"
               onClick={() => pushQuery({ ...q, typ: "sprzedaz" })}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 q.typ === "sprzedaz"
                   ? "bg-brand-primary text-white"
                   : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50"
@@ -292,7 +292,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
             <button
               type="button"
               onClick={() => pushQuery({ ...q, typ: "wynajem" })}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`min-h-[44px] rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
                 q.typ === "wynajem"
                   ? "bg-brand-primary text-white"
                   : "bg-white text-zinc-700 ring-1 ring-zinc-200 hover:bg-zinc-50"
@@ -325,7 +325,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
 
       <div className="lg:grid lg:grid-cols-[minmax(0,17rem)_1fr] lg:items-start lg:gap-10 xl:grid-cols-[minmax(0,19rem)_1fr] xl:gap-12">
         {/* Mobile / tablet: zwijane filtry */}
-        <details className="group mb-6 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 lg:hidden">
+        <details open className="group mb-6 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 lg:hidden">
           <summary className="cursor-pointer list-none font-semibold text-zinc-900 [&::-webkit-details-marker]:hidden">
             <span className="flex items-center justify-between gap-2">
               Filtry
