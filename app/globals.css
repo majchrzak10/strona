@@ -69,6 +69,22 @@ input[type="range"] {
   word-break: break-word;
 }
 
+/* Wejście szuflady menu z prawej strony (mobile nav drawer) */
+@keyframes slide-in-from-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-from-right 300ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-right {
+    animation: none;
+  }
+}
+
 /* Delikatne wejście modułu kontaktu (motion-safe + reduced-motion w komponencie) */
 @keyframes contact-strip-in {
   from {

@@ -250,11 +250,9 @@ export default function Navbar() {
         </>
       )}
 
+      {mobileOpen && (
       <div
-        className={`fixed inset-y-0 right-0 z-[110] flex w-72 max-w-[85vw] flex-col bg-white pb-[env(safe-area-inset-bottom,0px)] pt-[env(safe-area-inset-top,0px)] shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
-          mobileOpen ? "translate-x-0 pointer-events-auto" : "translate-x-full pointer-events-none"
-        }`}
-        aria-hidden={!mobileOpen}
+        className="animate-slide-in-right fixed inset-y-0 right-0 z-[110] flex w-72 max-w-[85vw] flex-col bg-white pb-[env(safe-area-inset-bottom,0px)] pt-[env(safe-area-inset-top,0px)] shadow-2xl md:hidden"
         aria-label="Menu nawigacyjne"
         id="mobile-nav-drawer"
       >
@@ -375,6 +373,7 @@ export default function Navbar() {
           </div>
         </nav>
       </div>
+      )}
     </>
   );
 }

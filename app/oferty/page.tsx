@@ -36,12 +36,6 @@ export default async function OfertyPage() {
             </p>
           ) : null}
 
-          {sourceFile ? (
-            <p className="mt-4 text-xs text-zinc-400">
-              Źródło danych: plik{" "}
-              <code className="rounded bg-zinc-100 px-1">{sourceFile}</code>
-            </p>
-          ) : null}
 
           {offers.length === 0 && !error ? (
             <p className="mt-10 text-zinc-600">Brak ofert w aktualnym eksporcie.</p>
