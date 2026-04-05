@@ -49,7 +49,8 @@ async function generateWithClaude(prompt) {
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5",
-        max_tokens: 500,
+        max_tokens: 250,
+        system: "Jesteś copywriterem piszącym posty na Facebook dla biura nieruchomości. BEZWZGLĘDNE ZASADY: 1) Tylko zwykły tekst — zero gwiazdek, zero markdown, zero hashtagów, zero list, zero cudzysłowów. 2) NIGDY nie wspominaj o biurze, jego historii, latach działalności, doświadczeniu, założeniu. 3) Pisz tylko o konkretnej ofercie. 4) Maksymalnie 4 zdania.",
         messages: [{ role: "user", content: prompt }],
       }),
     });
@@ -122,21 +123,9 @@ async function generateOfferCaption(offer) {
   const city = (offer.locationLabel || "").toLowerCase();
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
 
-  const prompt = `Napisz krótki post na Facebook o tej nieruchomości. ZASADY:
-- TYLKO zwykły tekst, zero gwiazdek, zero formatowania markdown, zero hashtagów, zero list
-- Zacznij od zachęcającego zdania o ofercie (np. "Mamy dla Was wyjątkową działkę..." lub podobnie)
-- NIE pisz nic o biurze, historii, latach działalności, doświadczeniu
-- Na końcu podaj szczegóły: lokalizacja, powierzchnia, cena
-- Ostatnie zdanie: zaproszenie do kontaktu — zadzwoń ${phone} lub umów prezentację
-- Maksymalnie 4-5 zdań łącznie
+  const prompt = `Oferta: ${offer.title}, ${offer.locationLabel || "Wągrowiec lub okolice"}, ${offer.areaLabel || ""}, ${offer.priceLabel}.
 
-Dane oferty:
-- Tytuł: ${offer.title}
-- Lokalizacja: ${offer.locationLabel || "Wągrowiec lub okolice"}
-- Cena: ${offer.priceLabel}
-- Powierzchnia: ${offer.areaLabel || "—"}
-
-Napisz tylko treść posta.`;
+Napisz post na Facebook: zacznij od zachęcającego zdania o tej ofercie, potem krótko szczegóły, na końcu: "Zadzwoń ${phone} lub umów się na prezentację." Łącznie maksymalnie 3-4 zdania.`;
 
   const aiText = await generateWithClaude(prompt);
   if (aiText) return `${aiText}\n\n🔗 ${offer.offerUrl}`;
