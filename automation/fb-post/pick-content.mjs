@@ -491,6 +491,9 @@ async function main() {
   console.log(`[fb-content] Generuję AI caption...`);
 
   const caption = await generateOfferCaption(offer);
+  console.log("[fb-content] === CAPTION START ===");
+  console.log(caption);
+  console.log("[fb-content] === CAPTION END ===");
 
   const payload = {
     postType: "offer",
