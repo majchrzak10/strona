@@ -475,7 +475,11 @@ async function main() {
     priceLabel: offer.priceLabel,
     areaLabel: offer.areaLabel,
     offerUrl: offer.offerUrl,
-    photos: offer.photoUrls,
+    photo1: offer.photoUrls[0] ?? "",
+    photo2: offer.photoUrls[1] ?? "",
+    photo3: offer.photoUrls[2] ?? "",
+    photo4: offer.photoUrls[3] ?? "",
+    photo5: offer.photoUrls[4] ?? "",
     caption,
   };
 
