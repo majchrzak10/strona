@@ -124,39 +124,29 @@ async function generateOfferCaption(offer) {
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
   const loc = offer.locationLabel || "okolicach Wągrowca";
 
-  // AI pisze TYLKO 2 zdania intro — few-shot żeby wiedział dokładnie co napisać
-  const prompt = `Napisz dokładnie 2 zdania o tej nieruchomości. Tylko o ofercie, nic więcej.
+  // AI uzupełnia JEDEN slot — max 8 słów o tym co wyróżnia ofertę
+  const prompt = `Co wyróżnia tę nieruchomość: ${offer.title}, ${loc}? Odpowiedz MAX 8 słowami, bez kropki na końcu, tylko sam opis cechy (np. "spokojna okolica blisko lasu", "świetna lokalizacja w centrum miasta").`;
 
-PRZYKŁAD:
-Oferta: Działka budowlana, Runowo
-Post: Piękna działka budowlana w Runowie czeka na nowego właściciela. To idealne miejsce dla tych, którzy marzą o własnym domu w spokojnej okolicy.
+  let feature = await generateWithClaude(prompt);
 
-TERAZ:
-Oferta: ${offer.title}, ${loc}
-Post:`;
-
-  let intro = await generateWithClaude(prompt);
-
-  if (intro) {
-    // Usuń markdown
-    intro = intro.replace(/\*\*/g, "").replace(/\*/g, "").replace(/#+\s?/g, "").replace(/_/g, "").trim();
-    // Usuń prefix "Post:" jeśli AI go dodało
-    intro = intro.replace(/^Post:\s*/i, "").trim();
-    // Utnij twardo do max 2 zdań
-    const sentences = intro.match(/[^.!?]+[.!?]+/g) || [];
-    intro = sentences.slice(0, 2).join(" ").trim();
-    // Jeśli cokolwiek o biurze/historii zostało — wywal całe intro
-    if (/dan.?dom|1996|biuro|wieloletni|doświadcz|nasz zesp/i.test(intro)) intro = null;
+  // Wyczyść i zabezpiecz
+  if (feature) {
+    feature = feature.replace(/\*\*/g, "").replace(/\*/g, "").replace(/\n/g, " ").replace(/["'.]/g, "").trim();
+    // Utnij do max 8 słów
+    feature = feature.split(" ").slice(0, 8).join(" ");
+    if (/dan.?dom|1996|biuro|wieloletni|doświadcz/i.test(feature)) feature = null;
   }
 
-  // Fallback jeśli AI nie dało rady
-  if (!intro) {
-    const fallbacks = [
-      `Mamy dla Was wyjątkową ofertę w ${loc}!`,
-      `Sprawdź tę nieruchomość w ${loc} — warto!`,
-      `Nowa oferta w ${loc} czeka na nowego właściciela.`,
-    ];
-    intro = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  const type = (offer.title || "").toLowerCase();
+  let intro;
+  if (feature) {
+    if (type.includes("działka"))   intro = `Mamy dla Was działkę w ${loc} — ${feature}!`;
+    else if (type.includes("dom"))  intro = `Mamy dla Was dom w ${loc} — ${feature}!`;
+    else                            intro = `Mamy dla Was ofertę w ${loc} — ${feature}!`;
+  } else {
+    if (type.includes("działka"))   intro = `Mamy dla Was wyjątkową działkę w ${loc}!`;
+    else if (type.includes("dom"))  intro = `Mamy dla Was piękny dom w ${loc}!`;
+    else                            intro = `Mamy dla Was świetną ofertę w ${loc}!`;
   }
 
   const parts = [intro, ""];
