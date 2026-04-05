@@ -119,8 +119,11 @@ function getUpcomingHoliday(daysAhead = 3) {
 // ---------------------------------------------------------------------------
 
 async function generateOfferCaption(offer) {
-  const prompt = `Jesteś copywriterem biura nieruchomości Dan-Dom z Wągrowca (działa od 1996 roku).
-Napisz post na Facebook dla tej oferty. MAKSYMALNIE 2 zdania. Bez formatowania, bez gwiazdek, bez list, bez hashtagów. Tylko zwykły tekst.
+  const city = (offer.locationLabel || "").toLowerCase();
+  const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
+
+  const prompt = `Jesteś copywriterem biura nieruchomości Dan-Dom.
+Napisz post na Facebook dla tej oferty. MAKSYMALNIE 2 zdania. Bez formatowania, bez gwiazdek, bez list, bez hashtagów. Tylko zwykły tekst. Nie wspominaj o historii ani latach działalności biura. Zakończ zaproszeniem do kontaktu: zadzwoń ${phone} lub umów prezentację.
 
 Dane oferty:
 - Tytuł: ${offer.title}
