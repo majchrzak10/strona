@@ -48,9 +48,9 @@ async function generateWithClaude(prompt) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-3-5-haiku-20241022",
-        max_tokens: 120,
-        system: "Piszesz TYLKO krótkie intro (2 zdania) do postu o nieruchomości. ZAKAZ ABSOLUTNY: gwiazdki, markdown, hashtagi, listy, słowa: Dan-Dom, biuro, 1996, doświadczenie, wieloletni, zespół, kontakt, telefon, prezentacja. Tylko 2 zdania zwykłego tekstu o samej ofercie.",
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 60,
+        system: "Odpowiadasz TYLKO dwoma zdaniami zwykłego tekstu. Zero markdown. Zero gwiazdek. Zero informacji o biurze.",
         messages: [{ role: "user", content: prompt }],
       }),
     });
