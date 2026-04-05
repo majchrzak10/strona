@@ -123,8 +123,8 @@ async function generateOfferCaption(offer) {
   const city = (offer.locationLabel || "").toLowerCase();
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
 
-  // AI generuje TYLKO jedno zdanie zachęty — nic więcej
-  const prompt = `Napisz JEDNO zdanie zachęty na Facebook o tej nieruchomości: ${offer.title}, ${offer.locationLabel || "okolice Wągrowca"}. Tylko zwykły tekst, bez gwiazdek, bez hashtagów. Jedno zdanie.`;
+  // AI generuje TYLKO 2 zdania zachęty — nic więcej
+  const prompt = `Napisz 2 zdania zachęty na Facebook o tej nieruchomości: ${offer.title}, ${offer.locationLabel || "okolice Wągrowca"}. Używaj prostej formy lokalizacji np. "w Runowie", "w Wągrowcu" — nigdy "w sercu", "w samym centrum". Tylko zwykły tekst, bez gwiazdek, bez hashtagów. Dokładnie 2 zdania.`;
 
   let intro = await generateWithClaude(prompt);
 
