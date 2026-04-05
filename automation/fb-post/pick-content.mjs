@@ -124,20 +124,29 @@ async function generateOfferCaption(offer) {
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
   const loc = offer.locationLabel || "okolicach Wągrowca";
 
-  // AI pisze TYLKO 2 zdania intro o ofercie
-  const prompt = `Napisz 2 zdania o tej nieruchomości do postu na Facebook: ${offer.title}, ${loc}. Żadnych gwiazdek, żadnych hashtagów, żadnych słów o biurze ani kontakcie.`;
+  // AI pisze TYLKO 2 zdania intro — few-shot żeby wiedział dokładnie co napisać
+  const prompt = `Napisz dokładnie 2 zdania o tej nieruchomości. Tylko o ofercie, nic więcej.
+
+PRZYKŁAD:
+Oferta: Działka budowlana, Runowo
+Post: Piękna działka budowlana w Runowie czeka na nowego właściciela. To idealne miejsce dla tych, którzy marzą o własnym domu w spokojnej okolicy.
+
+TERAZ:
+Oferta: ${offer.title}, ${loc}
+Post:`;
 
   let intro = await generateWithClaude(prompt);
 
   if (intro) {
-    // Usuń cały markdown i niedozwolone treści
-    intro = intro
-      .replace(/\*\*/g, "").replace(/\*/g, "").replace(/#+\s?/g, "").replace(/_/g, "").trim();
-    // Jeśli AI mimo wszystko wspomniało o biurze/historii — wywal to zdanie
-    const sentences = intro.split(/(?<=[.!?])\s+/);
-    const bad = /dan.?dom|1996|biuro|wieloletni|od roku|doświadcz|nasz zesp|skontaktuj|zadzwoń|telefon|prezentacj/i;
-    intro = sentences.filter(s => !bad.test(s)).join(" ").trim();
-    if (!intro) intro = null;
+    // Usuń markdown
+    intro = intro.replace(/\*\*/g, "").replace(/\*/g, "").replace(/#+\s?/g, "").replace(/_/g, "").trim();
+    // Usuń prefix "Post:" jeśli AI go dodało
+    intro = intro.replace(/^Post:\s*/i, "").trim();
+    // Utnij twardo do max 2 zdań
+    const sentences = intro.match(/[^.!?]+[.!?]+/g) || [];
+    intro = sentences.slice(0, 2).join(" ").trim();
+    // Jeśli cokolwiek o biurze/historii zostało — wywal całe intro
+    if (/dan.?dom|1996|biuro|wieloletni|doświadcz|nasz zesp/i.test(intro)) intro = null;
   }
 
   // Fallback jeśli AI nie dało rady
