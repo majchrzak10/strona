@@ -48,9 +48,9 @@ async function generateWithClaude(prompt) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5",
-        max_tokens: 250,
-        system: "Jesteś copywriterem piszącym posty na Facebook dla biura nieruchomości. BEZWZGLĘDNE ZASADY: 1) Tylko zwykły tekst — zero gwiazdek, zero markdown, zero hashtagów, zero list, zero cudzysłowów. 2) NIGDY nie wspominaj o biurze, jego historii, latach działalności, doświadczeniu, założeniu. 3) Pisz tylko o konkretnej ofercie. 4) Maksymalnie 4 zdania.",
+        model: "claude-3-5-haiku-20241022",
+        max_tokens: 120,
+        system: "Piszesz TYLKO krótkie intro (2 zdania) do postu o nieruchomości. ZAKAZ ABSOLUTNY: gwiazdki, markdown, hashtagi, listy, słowa: Dan-Dom, biuro, 1996, doświadczenie, wieloletni, zespół, kontakt, telefon, prezentacja. Tylko 2 zdania zwykłego tekstu o samej ofercie.",
         messages: [{ role: "user", content: prompt }],
       }),
     });
@@ -122,29 +122,35 @@ function getUpcomingHoliday(daysAhead = 3) {
 async function generateOfferCaption(offer) {
   const city = (offer.locationLabel || "").toLowerCase();
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
+  const loc = offer.locationLabel || "okolicach Wągrowca";
 
-  // AI generuje TYLKO 2 zdania zachęty — nic więcej
-  const prompt = `Napisz 2 zdania zachęty na Facebook o tej nieruchomości: ${offer.title}, ${offer.locationLabel || "okolice Wągrowca"}. Używaj prostej formy lokalizacji np. "w Runowie", "w Wągrowcu" — nigdy "w sercu", "w samym centrum". Tylko zwykły tekst, bez gwiazdek, bez hashtagów. Dokładnie 2 zdania.`;
+  // AI pisze TYLKO 2 zdania intro o ofercie
+  const prompt = `Napisz 2 zdania o tej nieruchomości do postu na Facebook: ${offer.title}, ${loc}. Żadnych gwiazdek, żadnych hashtagów, żadnych słów o biurze ani kontakcie.`;
 
   let intro = await generateWithClaude(prompt);
 
-  // Oczyść z markdown i wzmianek o biurze
   if (intro) {
+    // Usuń cały markdown i niedozwolone treści
     intro = intro
-      .replace(/\*\*/g, "")
-      .replace(/\*/g, "")
-      .replace(/#+\s/g, "")
-      .replace(/[^\S\r\n]{2,}/g, " ")
-      .trim();
-    // usuń zdania wspominające o biurze/historii
-    const bad = /dan.?dom|1996|biuro|lat doświadcz|wieloletni|od roku/i;
-    if (bad.test(intro)) intro = null;
+      .replace(/\*\*/g, "").replace(/\*/g, "").replace(/#+\s?/g, "").replace(/_/g, "").trim();
+    // Jeśli AI mimo wszystko wspomniało o biurze/historii — wywal to zdanie
+    const sentences = intro.split(/(?<=[.!?])\s+/);
+    const bad = /dan.?dom|1996|biuro|wieloletni|od roku|doświadcz|nasz zesp|skontaktuj|zadzwoń|telefon|prezentacj/i;
+    intro = sentences.filter(s => !bad.test(s)).join(" ").trim();
+    if (!intro) intro = null;
   }
 
-  // Buduj caption statycznie — gwarantowany format
-  const parts = [];
-  if (intro) parts.push(intro);
-  parts.push("");
+  // Fallback jeśli AI nie dało rady
+  if (!intro) {
+    const fallbacks = [
+      `Mamy dla Was wyjątkową ofertę w ${loc}!`,
+      `Sprawdź tę nieruchomość w ${loc} — warto!`,
+      `Nowa oferta w ${loc} czeka na nowego właściciela.`,
+    ];
+    intro = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  }
+
+  const parts = [intro, ""];
   if (offer.locationLabel) parts.push(`📍 ${offer.locationLabel}`);
   if (offer.areaLabel)     parts.push(`📐 ${offer.areaLabel}`);
   if (offer.priceLabel)    parts.push(`💰 ${offer.priceLabel}`);
