@@ -123,13 +123,37 @@ async function generateOfferCaption(offer) {
   const city = (offer.locationLabel || "").toLowerCase();
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
 
-  const prompt = `Oferta: ${offer.title}, ${offer.locationLabel || "Wągrowiec lub okolice"}, ${offer.areaLabel || ""}, ${offer.priceLabel}.
+  // AI generuje TYLKO jedno zdanie zachęty — nic więcej
+  const prompt = `Napisz JEDNO zdanie zachęty na Facebook o tej nieruchomości: ${offer.title}, ${offer.locationLabel || "okolice Wągrowca"}. Tylko zwykły tekst, bez gwiazdek, bez hashtagów. Jedno zdanie.`;
 
-Napisz post na Facebook: zacznij od zachęcającego zdania o tej ofercie, potem krótko szczegóły, na końcu: "Zadzwoń ${phone} lub umów się na prezentację." Łącznie maksymalnie 3-4 zdania.`;
+  let intro = await generateWithClaude(prompt);
 
-  const aiText = await generateWithClaude(prompt);
-  if (aiText) return `${aiText}\n\n🔗 ${offer.offerUrl}`;
-  return buildStaticOfferCaption(offer);
+  // Oczyść z markdown i wzmianek o biurze
+  if (intro) {
+    intro = intro
+      .replace(/\*\*/g, "")
+      .replace(/\*/g, "")
+      .replace(/#+\s/g, "")
+      .replace(/[^\S\r\n]{2,}/g, " ")
+      .trim();
+    // usuń zdania wspominające o biurze/historii
+    const bad = /dan.?dom|1996|biuro|lat doświadcz|wieloletni|od roku/i;
+    if (bad.test(intro)) intro = null;
+  }
+
+  // Buduj caption statycznie — gwarantowany format
+  const parts = [];
+  if (intro) parts.push(intro);
+  parts.push("");
+  if (offer.locationLabel) parts.push(`📍 ${offer.locationLabel}`);
+  if (offer.areaLabel)     parts.push(`📐 ${offer.areaLabel}`);
+  if (offer.priceLabel)    parts.push(`💰 ${offer.priceLabel}`);
+  parts.push("");
+  parts.push(`Zadzwoń ${phone} lub umów się na prezentację.`);
+  parts.push("");
+  parts.push(`🔗 ${offer.offerUrl}`);
+
+  return parts.join("\n");
 }
 
 async function generateHolidayCaption(holiday) {
