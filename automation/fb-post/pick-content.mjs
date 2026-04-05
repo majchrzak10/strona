@@ -122,8 +122,13 @@ async function generateOfferCaption(offer) {
   const city = (offer.locationLabel || "").toLowerCase();
   const phone = city.includes("rogoźno") || city.includes("rogozno") ? "506 541 111" : "501 769 166";
 
-  const prompt = `Jesteś copywriterem biura nieruchomości Dan-Dom.
-Napisz post na Facebook dla tej oferty. MAKSYMALNIE 2 zdania. Bez formatowania, bez gwiazdek, bez list, bez hashtagów. Tylko zwykły tekst. Nie wspominaj o historii ani latach działalności biura. Zakończ zaproszeniem do kontaktu: zadzwoń ${phone} lub umów prezentację.
+  const prompt = `Napisz krótki post na Facebook o tej nieruchomości. ZASADY:
+- TYLKO zwykły tekst, zero gwiazdek, zero formatowania markdown, zero hashtagów, zero list
+- Zacznij od zachęcającego zdania o ofercie (np. "Mamy dla Was wyjątkową działkę..." lub podobnie)
+- NIE pisz nic o biurze, historii, latach działalności, doświadczeniu
+- Na końcu podaj szczegóły: lokalizacja, powierzchnia, cena
+- Ostatnie zdanie: zaproszenie do kontaktu — zadzwoń ${phone} lub umów prezentację
+- Maksymalnie 4-5 zdań łącznie
 
 Dane oferty:
 - Tytuł: ${offer.title}
@@ -131,7 +136,7 @@ Dane oferty:
 - Cena: ${offer.priceLabel}
 - Powierzchnia: ${offer.areaLabel || "—"}
 
-Napisz tylko treść posta, bez żadnych komentarzy od siebie.`;
+Napisz tylko treść posta.`;
 
   const aiText = await generateWithClaude(prompt);
   if (aiText) return `${aiText}\n\n🔗 ${offer.offerUrl}`;
