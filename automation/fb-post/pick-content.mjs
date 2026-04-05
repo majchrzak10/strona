@@ -120,8 +120,7 @@ function getUpcomingHoliday(daysAhead = 3) {
 
 async function generateOfferCaption(offer) {
   const prompt = `Jesteś copywriterem biura nieruchomości Dan-Dom z Wągrowca (działa od 1996 roku).
-Napisz angażujący post na Facebook dla tej oferty. Post ma być po polsku, ciepły i profesjonalny, maksymalnie 180 słów.
-NIE używaj hashtagów. Zakończ zaproszeniem do kontaktu lub obejrzenia oferty.
+Napisz post na Facebook dla tej oferty. MAKSYMALNIE 2 zdania. Bez formatowania, bez gwiazdek, bez list, bez hashtagów. Tylko zwykły tekst.
 
 Dane oferty:
 - Tytuł: ${offer.title}
