@@ -5,7 +5,7 @@ import LegacyNieruchomosciRedirect from "@/components/nieruchomosci/LegacyNieruc
 import { SITE_URL } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Nieruchomości na wynajem — Dan-Dom",
+  title: "Nieruchomości na wynajem",
   description:
     "Aktualne oferty wynajmu mieszkań, domów i lokali. Biuro nieruchomości Dan-Dom — Wągrowiec i Rogoźno.",
   alternates: { canonical: `${SITE_URL}/nieruchomosci/?typ=wynajem` },

@@ -24,19 +24,29 @@ export const metadata: Metadata = {
 const homeBreadcrumbJsonLd = breadcrumbJsonLd([{ name: "Strona główna", route: "" }]);
 const homeFaqJsonLd = faqJsonLd("home", [
   {
-    question: "Na jakim obszarze działa biuro Dan-Dom?",
+    question: "Ile kosztuje mieszkanie w Wągrowcu?",
     answer:
-      "Obsługujemy przede wszystkim Wągrowiec, Rogoźno i okoliczne miejscowości w województwie wielkopolskim.",
+      "Na rynku wtórnym ceny wahają się od 4500 do 7000 zł/m², w zależności od lokalizacji, stanu technicznego i piętra. Biuro Dan-Dom oferuje bezpłatną wycenę — zadzwoń: 501 769 166.",
   },
   {
-    question: "Czy pomagacie również w finansowaniu zakupu nieruchomości?",
+    question: "Jak długo trwa sprzedaż nieruchomości w Wągrowcu?",
     answer:
-      "Tak. Wspieramy klientów także w zakresie formalności, współpracy z doradcą kredytowym i przygotowania transakcji.",
+      "Atrakcyjne mieszkania sprzedają się zwykle w 4–8 tygodni. Domy jednorodzinne wymagają 2–6 miesięcy. Dan-Dom, dzięki lokalnej bazie kupujących, skutecznie skraca ten czas.",
   },
   {
-    question: "Jak najszybciej skontaktować się w sprawie oferty?",
+    question: "Czy Dan-Dom obsługuje Rogoźno?",
     answer:
-      "Najszybciej telefonicznie lub przez formularz kontaktowy na stronie. Odpowiadamy możliwie szybko w godzinach pracy biura.",
+      "Tak. Dan-Dom prowadzi biuro w Rogoźnie przy ul. Wielkiej Poznańskiej 29 i obsługuje powiat obornicki. Kontakt: 506 541 111.",
+  },
+  {
+    question: "Co zawiera usługa pośrednictwa w sprzedaży nieruchomości?",
+    answer:
+      "Bezpłatna wycena, profesjonalne zdjęcia, publikacja na Otodom, OLX i Gratka, organizacja prezentacji, negocjacje oraz wsparcie przy dokumentach i umowie notarialnej.",
+  },
+  {
+    question: "Jak zamówić bezpłatną wycenę nieruchomości?",
+    answer:
+      "Zadzwoń pod 501 769 166 lub napisz na biuro@dan-dom.pl. Agent umówi się na oględziny i przedstawi wycenę w ciągu kilku dni — bez żadnych zobowiązań.",
   },
 ]);
 

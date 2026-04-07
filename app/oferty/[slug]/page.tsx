@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = `oferty/${slug}`;
   const pageUrl = canonicalUrl(path);
   const ogImage = o.mainImageSrc ?? OG_FALLBACK_IMAGE;
-  const ogTitle = `${o.title} — Dan-Dom Nieruchomości`;
+  const ogTitle = o.title;
   return {
     title: ogTitle,
     description,

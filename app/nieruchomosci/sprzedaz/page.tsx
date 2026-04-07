@@ -5,7 +5,7 @@ import LegacyNieruchomosciRedirect from "@/components/nieruchomosci/LegacyNieruc
 import { SITE_URL } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Nieruchomości na sprzedaż — Dan-Dom",
+  title: "Nieruchomości na sprzedaż",
   description:
     "Aktualne oferty sprzedaży mieszkań, domów, działek i lokali komercyjnych. Biuro nieruchomości Dan-Dom — Wągrowiec i Rogoźno.",
   alternates: { canonical: `${SITE_URL}/nieruchomosci/?typ=sprzedaz` },
