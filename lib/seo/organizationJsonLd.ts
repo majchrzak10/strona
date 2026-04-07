@@ -12,7 +12,7 @@ export const organizationJsonLd = {
   image: `${SITE_URL}/hero-biuro.jpg`,
   logo: `${SITE_URL}/icon-512.png`,
   description:
-    "Biuro nieruchomości z ponad 28-letnim doświadczeniem. Sprzedaż, zakup i wynajem nieruchomości w Wągrowcu i Rogoźnie.",
+    "Biuro nieruchomości z ponad 30-letnim doświadczeniem. Sprzedaż, zakup i wynajem nieruchomości w Wągrowcu i Rogoźnie.",
   foundingDate: "1996",
   priceRange: "$$",
   areaServed: [

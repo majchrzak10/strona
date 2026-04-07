@@ -14,7 +14,7 @@ const PAGE_URL = canonicalUrl("uslugi/wycena-nieruchomosci");
 export const metadata: Metadata = {
   title: "Wycena nieruchomości — Dan-Dom Wągrowiec i Rogoźno",
   description:
-    "Bezpłatna wycena mieszkań, domów, działek i lokali. Znamy lokalny rynek — podpowiemy realną wartość przed sprzedażą lub wynajmem. Biuro nieruchomości Dan-Dom.",
+    "Bezpłatna wycena mieszkań, domów, działek i lokali w Wągrowcu i Rogoźnie. 30 lat doświadczenia, znamy lokalny rynek. Podpowiemy realną wartość przed sprzedażą lub wynajmem.",
   alternates: { canonical: PAGE_URL },
   openGraph: {
     url: PAGE_URL,

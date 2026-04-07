@@ -20,7 +20,7 @@ export default function CompanyOverview() {
             O biurze — Kim jesteśmy
           </h2>
           <p className="mt-6 text-[1.125rem] font-normal leading-[1.75] tracking-[0.02em] text-rose-50/90 sm:mt-8">
-            Od ponad 28 lat specjalizujemy się w kompleksowej obsłudze rynku nieruchomości.
+            Od ponad 30 lat specjalizujemy się w kompleksowej obsłudze rynku nieruchomości.
             Łączymy bogatą bazę ofert z profesjonalnym doradztwem w zakresie negocjacji,
             sporządzania umów oraz wycen. Doskonale znamy lokalny rynek, co pozwala nam działać
             szybko i skutecznie. Jesteśmy z Tobą od pierwszej prezentacji aż po przekazaniu kluczy.

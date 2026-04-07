@@ -16,7 +16,7 @@ import { faqJsonLd } from "@/lib/seo/faqJsonLd";
 export const metadata: Metadata = {
   title: "Biuro Nieruchomości Wągrowiec i Rogoźno — Dan-Dom | Od 1996",
   description:
-    "Biuro nieruchomości Wągrowiec i Rogoźno. 28 lat doświadczenia, 60 opinii ★4.9. Sprzedaż, zakup i wynajem nieruchomości. Zadzwoń: 501 769 166",
+    "Biuro nieruchomości Wągrowiec i Rogoźno. 30 lat doświadczenia, 60 opinii ★4.9. Sprzedaż, zakup i wynajem nieruchomości. Zadzwoń: 501 769 166",
   alternates: { canonical: canonicalUrl("") },
   openGraph: { url: canonicalUrl("") },
 };
