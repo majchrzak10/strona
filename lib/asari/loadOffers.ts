@@ -17,6 +17,16 @@ function filenameTimestamp(name: string): number {
   return m ? parseInt(m[1] + m[2], 10) : 0;
 }
 
+/** Parsuje timestamp pliku Asari jako Unix ms (do ustawienia listedAtMs gdy brak w XML). */
+function filenameTimestampMs(name: string): number {
+  const m = name.match(/_(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})_/);
+  if (!m) return 0;
+  return new Date(
+    parseInt(m[1]), parseInt(m[2]) - 1, parseInt(m[3]),
+    parseInt(m[4]), parseInt(m[5]), parseInt(m[6]),
+  ).getTime();
+}
+
 /** Pliki paczek ofert Asari: końcówka _001.xml, bez definicji i bez CFG. */
 function isOfferPackageFile(name: string): boolean {
   if (!/_001\.xml$/i.test(name)) return false;
@@ -117,6 +127,7 @@ async function loadAsariOffersInner(): Promise<LoadAsariResult> {
     }
 
     const rawList = packageOffers(root);
+    const fileMs = filenameTimestampMs(n);
     let count = 0;
     for (const raw of rawList) {
       const normalized = normalizeRawOffer(raw);
@@ -127,6 +138,7 @@ async function loadAsariOffersInner(): Promise<LoadAsariResult> {
       try {
         const d = rawOfferToDetail(normalized);
         if (d) {
+          if (d.listedAtMs == null && fileMs > 0) d.listedAtMs = fileMs;
           bySig.set(d.signature, d);
           count++;
         }
