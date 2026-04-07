@@ -15,6 +15,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: canonicalUrl(""), lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: canonicalUrl("oferty"), lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: canonicalUrl("nieruchomosci"), lastModified: new Date(), changeFrequency: "daily", priority: 0.85 },
+    { url: canonicalUrl("nieruchomosci-wagrowiec"), lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
+    { url: canonicalUrl("nieruchomosci-rogozno"), lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
     {
       url: canonicalUrl("uslugi/sprzedaz-nieruchomosci"),
       lastModified: new Date(),
