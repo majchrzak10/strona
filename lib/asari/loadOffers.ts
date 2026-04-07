@@ -11,6 +11,12 @@ import {
 import { normalizeRawOffer } from "./schemas";
 import type { AsariOfferDetail } from "./types";
 
+/** Parsuje znacznik czasu z nazwy pliku Asari: XXXXXX_YYYYMMDD_HHMMSS_001.xml → liczba YYYYMMDDHHMMSS */
+function filenameTimestamp(name: string): number {
+  const m = name.match(/_(\d{8})_(\d{6})_/);
+  return m ? parseInt(m[1] + m[2], 10) : 0;
+}
+
 /** Pliki paczek ofert Asari: końcówka _001.xml, bez definicji i bez CFG. */
 function isOfferPackageFile(name: string): boolean {
   if (!/_001\.xml$/i.test(name)) return false;
@@ -78,14 +84,13 @@ async function loadAsariOffersInner(): Promise<LoadAsariResult> {
     };
   }
 
-  const withStat = await Promise.all(
-    candidates.map(async (n) => {
-      const p = path.join(dir, n);
-      const st = await fs.stat(p);
-      return { n, mtime: st.mtimeMs };
-    }),
-  );
-  withStat.sort((a, b) => a.mtime - b.mtime);
+  const withStat = candidates.map((n) => ({ n }));
+  withStat.sort((a, b) => {
+    const ta = filenameTimestamp(a.n);
+    const tb = filenameTimestamp(b.n);
+    if (ta !== tb) return ta - tb;
+    return a.n.localeCompare(b.n);
+  });
 
   const bySig = new Map<string, AsariOfferDetail>();
   const usedFiles: string[] = [];
