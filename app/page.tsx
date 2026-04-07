@@ -74,7 +74,7 @@ export default function Home() {
               <div className="grid grid-cols-3 divide-x divide-zinc-100">
                 {[
                   { value: "1400+", label: "Sprzedanych nieruchomości" },
-                  { value: "25+",   label: "Lat na rynku" },
+                  { value: "30+",   label: "Lat na rynku" },
                   { value: "1000+", label: "Zadowolonych klientów" },
                 ].map((stat) => (
                   <div key={stat.label} className="flex min-w-0 flex-col items-center px-2 py-2 text-center sm:px-8 sm:py-0">
