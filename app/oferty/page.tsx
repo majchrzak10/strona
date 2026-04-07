@@ -7,8 +7,9 @@ import { toCard } from "@/lib/asari/mapOffer";
 import { canonicalUrl } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "Oferty — Dan-Dom Nieruchomości",
-  description: "Aktualna oferta nieruchomości z biura Dan-Dom.",
+  title: "Oferty nieruchomości Wągrowiec i Rogoźno",
+  description:
+    "Aktualne oferty nieruchomości: domy, mieszkania, działki i lokale w Wągrowcu, Rogoźnie i okolicach. Ponad 60 ofert. Sprawdź i zadzwoń: 501 769 166.",
   alternates: { canonical: canonicalUrl("oferty") },
   openGraph: { url: canonicalUrl("oferty") },
 };
