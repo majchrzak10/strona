@@ -325,7 +325,7 @@ export default function FilteredOffersGrid({ offers }: Props) {
 
       <div className="lg:grid lg:grid-cols-[minmax(0,17rem)_1fr] lg:items-start lg:gap-10 xl:grid-cols-[minmax(0,19rem)_1fr] xl:gap-12">
         {/* Mobile / tablet: zwijane filtry */}
-        <details open className="group mb-6 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 lg:hidden">
+        <details className="group mb-6 rounded-2xl border border-zinc-200 bg-zinc-50/80 p-4 lg:hidden">
           <summary className="cursor-pointer list-none font-semibold text-zinc-900 [&::-webkit-details-marker]:hidden">
             <span className="flex items-center justify-between gap-2">
               Filtry
