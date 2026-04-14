@@ -21,7 +21,7 @@ export default function NotFound() {
           </h1>
           <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-zinc-600">
             Ta strona nie istnieje lub została przeniesiona. Możesz wrócić na stronę główną lub
-            przejrzeć aktualne oferty.
+            przejść do listy nieruchomości z wyszukiwarką.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-4">
             <Link
@@ -31,10 +31,10 @@ export default function NotFound() {
               Strona główna
             </Link>
             <Link
-              href="/oferty/"
+              href="/nieruchomosci/"
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-zinc-300 bg-white px-8 py-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-50"
             >
-              Oferty
+              Nieruchomości
             </Link>
           </div>
         </div>

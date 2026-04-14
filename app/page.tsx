@@ -71,7 +71,7 @@ export default function Home() {
           ─────────────────────────────────────────────────── */}
           <section className="mx-auto w-full max-w-[1600px] overflow-hidden rounded-2xl bg-white shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
             <div className="px-6 py-8 sm:px-14 sm:py-12">
-              <div className="grid grid-cols-3 divide-x divide-zinc-100">
+              <div className="grid grid-cols-1 gap-8 divide-y divide-zinc-100 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-y-0">
                 {[
                   { value: "1400+", label: "Sprzedanych nieruchomości" },
                   { value: "30+",   label: "Lat na rynku" },

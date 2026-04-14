@@ -182,7 +182,7 @@ export default async function OfertaSinglePage({ params }: Props) {
             pricePln={o.pricePln}
           />
           <Link
-            href="/oferty"
+            href="/oferty/"
             className="inline-flex items-center gap-2 text-sm font-semibold text-burgundy hover:underline"
           >
             ← Wszystkie oferty

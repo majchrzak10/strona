@@ -2,11 +2,15 @@
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Link from "next/link";
+import Script from "next/script";
 import { useCallback, useEffect, useState } from "react";
 import { trackEvent } from "@/lib/client/analytics";
 
 const STORAGE_KEY = "dan-dom-cookie-consent";
 const STORAGE_VERSION = 1;
+
+/** Publiczny identyfikator Google Ads (konwersje) — ładowany wyłącznie po zgodzie użytkownika. */
+const GOOGLE_ADS_MEASUREMENT_ID = "AW-18073325436";
 
 type ConsentState = "loading" | "pending" | "analytics" | "essential";
 
@@ -30,9 +34,11 @@ function writeStored(analytics: boolean) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-/** Ładuje GA4 dopiero po zgodzie na analitykę (RODO / ePrivacy). Bez `gaId` nic nie renderuje. */
+/** GA4 + tag Google Ads ładowane dopiero po zgodzie (RODO / ePrivacy). */
 export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
   const [consent, setConsent] = useState<ConsentState>("loading");
+
+  const needsConsentBanner = Boolean(gaId) || Boolean(GOOGLE_ADS_MEASUREMENT_ID);
 
   useEffect(() => {
     const stored = readStored();
@@ -84,7 +90,7 @@ export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
     return () => document.removeEventListener("click", onClick);
   }, [consent]);
 
-  if (!gaId) {
+  if (!needsConsentBanner) {
     return null;
   }
 
@@ -94,7 +100,23 @@ export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
 
   return (
     <>
-      {consent === "analytics" ? <GoogleAnalytics gaId={gaId} /> : null}
+      {consent === "analytics" ? (
+        <>
+          {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_MEASUREMENT_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-ads-config" strategy="afterInteractive">
+            {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_MEASUREMENT_ID}');
+          `}
+          </Script>
+        </>
+      ) : null}
       {consent === "pending" ? (
         <div
           role="dialog"
@@ -104,12 +126,12 @@ export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
           <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-8">
             <div className="min-w-0 flex-1 text-sm leading-relaxed text-zinc-700">
               <p id="cookie-consent-title" className="font-semibold text-zinc-900">
-                Pliki cookies i analityka
+                Pliki cookies, analityka i pomiar reklam
               </p>
               <p className="mt-1.5">
-                Używamy narzędzia Google Analytics 4, aby lepiej rozumieć, jak korzystasz z serwisu.
-                Możesz zaakceptować analitykę albo ograniczyć się do cookies niezbędnych do działania
-                strony.{" "}
+                Po akceptacji możemy używać Google Analytics 4 oraz tagu Google Ads (pomiar konwersji),
+                aby lepiej rozumieć ruch w serwisie i skuteczność działań marketingowych. Możesz też
+                ograniczyć się do cookies niezbędnych do działania strony.{" "}
                 <Link
                   href="/polityka-prywatnosci/"
                   className="font-medium text-burgundy underline decoration-burgundy/30 underline-offset-2 hover:decoration-burgundy"
@@ -131,7 +153,7 @@ export default function CookieConsentRoot({ gaId }: { gaId?: string }) {
                 onClick={acceptAnalytics}
                 className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-brand-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-hover"
               >
-                Akceptuję analitykę
+                Akceptuję analitykę i pomiar reklam
               </button>
             </div>
           </div>

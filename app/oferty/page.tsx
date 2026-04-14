@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ContactDetailsSection from "@/components/ContactDetailsSection";
 import OfferCard from "@/components/offers/OfferCard";
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function OfertyPage() {
-  const { offers, sourceFile, error } = await loadAsariOffers();
+  const { offers, error } = await loadAsariOffers();
 
   return (
     <div className="min-h-screen bg-[#f4f4f4] text-black">
@@ -30,6 +31,16 @@ export default async function OfertyPage() {
             Oferty nieruchomości
           </h1>
           <div className="mt-4 h-px w-28 bg-brand-primary/80" />
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+            Szukasz według typu transakcji, ceny lub liczby pokoi?{" "}
+            <Link
+              href="/nieruchomosci/"
+              className="font-semibold text-brand-primary underline decoration-brand-primary/30 underline-offset-2 hover:decoration-brand-primary"
+            >
+              Otwórz wyszukiwarkę ofert z filtrami
+            </Link>
+            .
+          </p>
 
           {error ? (
             <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

@@ -47,15 +47,15 @@ export default async function RecentOffersSection() {
           {error && top3.length === 0 ? (
             <p className="text-sm text-zinc-600">
               {error}{" "}
-              <Link href="/oferty/" className="font-medium text-burgundy underline hover:no-underline">
-                Przejdź do listy ofert
+              <Link href="/nieruchomosci/" className="font-medium text-burgundy underline hover:no-underline">
+                Przejdź do wyszukiwarki ofert
               </Link>
             </p>
           ) : top3.length === 0 ? (
             <p className="text-sm text-zinc-600">
               Brak ofert w eksporcie.{" "}
-              <Link href="/oferty/" className="font-medium text-burgundy underline hover:no-underline">
-                Zobacz oferty
+              <Link href="/nieruchomosci/" className="font-medium text-burgundy underline hover:no-underline">
+                Zobacz oferty z filtrami
               </Link>
             </p>
           ) : (
