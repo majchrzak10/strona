@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<PACKAGE>
+  <DELETE>
+    <offers />
+    <pictures />
+  </DELETE>
+  <offer>
+    <signature>317/6093/OMS</signature>
+    <parameters>
+      <p id="1">317/6093/OMS</p>
+      <p id="2">Biuro Nieruchomości DAN-DOM</p>
+      <p id="3">2026-04-16 14:18:50.0182</p>
+      <p id="5">2024-09-26 12:04:08.0058</p>
+      <p id="10">323675.0000</p>
+      <p id="13">5500.0000</p>
+      <p id="19">3-POKOJOWE</p>
+      <p id="23">ANEKS KUCHENNY</p>
+      <p id="26">AKTUALNA</p>
+      <p id="36">MIESZKANIE</p>
+      <p id="38"></p>
+      <p id="43">SPRZEDAŻ</p>
+      <p id="45">KUJAWSKO-POMORSKIE</p>
+      <p id="46">NAKIELSKI</p>
+      <p id="47">KCYNIA</p>
+      <p id="48">KCYNIA</p>
+      <p id="49"></p>
+      <p id="51">0.0000</p>
+      <p id="52"></p>
+      <p id="59">DOMOFON</p>
+      <p id="60">POLSKA</p>
+      <p id="62">1.0000</p>
+      <p id="63">3.0000</p>
+      <p id="70">BLOK</p>
+      <p id="71">2024</p>
+      <p id="72">DO WYKOŃCZENIA</p>
+      <p id="74">SILIKAT</p>
+      <p id="78">PCV</p>
+      <p id="79">3.0000</p>
+      <p id="82"></p>
+      <p id="83">1.0000</p>
+      <p id="86"></p>
+      <p id="87">PIEC GAZOWY</p>
+      <p id="89">C.O. GAZOWE,C.O. WŁASNE</p>
+      <p id="93">76387.3000</p>
+      <p id="94">90046.3900</p>
+      <p id="121">WŁASNOŚĆ</p>
+      <p id="128">58.8500</p>
+      <p id="141">PLN</p>
+      <p id="170">501-769-166</p>
+      <p id="171">dan-dom@wp.pl</p>
+      <p id="172">577</p>
+      <p id="174">34716.0000</p>
+      <p id="201"></p>
+      <p id="202"></p>
+      <p id="220">PIERWOTNY</p>
+      <p id="300">Młyńska</p>
+      <p id="305">Danuta Majchrzak</p>
+      <p id="307">NIE</p>
+      <p id="340"></p>
+      <p id="341"></p>
+      <p id="342"></p>
+      <p id="343"></p>
+      <p id="344"></p>
+      <p id="345"></p>
+      <p id="349">NIE</p>
+      <p id="489">TAK</p>
+      <p id="491">Nowe mieszkania 3 pokoje, Kcynia ul. Młyńska</p>
+      <p id="492">NIE</p>
+    </parameters>
+    <pictures>
+      <picture>
+        <unique>111965934.jpg</unique>
+        <status>1</status>
+        <weight>1</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111779712.jpg</unique>
+        <status>0</status>
+        <weight>2</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111779714.jpg</unique>
+        <status>0</status>
+        <weight>3</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111779716.jpg</unique>
+        <status>0</status>
+        <weight>4</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>107608314.jpg</unique>
+        <status>0</status>
+        <weight>5</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>107608316.jpg</unique>
+        <status>0</status>
+        <weight>6</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>108857097.jpg</unique>
+        <status>0</status>
+        <weight>7</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>108857098.jpg</unique>
+        <status>0</status>
+        <weight>8</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>108857096.jpg</unique>
+        <status>0</status>
+        <weight>9</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>108857099.jpg</unique>
+        <status>0</status>
+        <weight>10</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>107608315.jpg</unique>
+        <status>0</status>
+        <weight>11</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>107608319.jpg</unique>
+        <status>0</status>
+        <weight>12</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>108857100.jpg</unique>
+        <status>0</status>
+        <weight>13</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>107608322.jpg</unique>
+        <status>0</status>
+        <weight>14</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>106817489.jpg</unique>
+        <status>0</status>
+        <weight>15</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>110762922.jpg</unique>
+        <status>0</status>
+        <weight>16</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>110170555.jpg</unique>
+        <status>0</status>
+        <weight>17</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>110918129.jpg</unique>
+        <status>0</status>
+        <weight>18</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111224342.jpg</unique>
+        <status>0</status>
+        <weight>19</weight>
+        <description />
+      </picture>
+      <picture>
+        <unique>111966025.jpg</unique>
+        <status>0</status>
+        <weight>20</weight>
+        <description />
+      </picture>
+    </pictures>
+    <description>Na sprzedaż mieszkania deweloperskie w spokojnej, a zarazem bliskiej centrum lokalizacji miasta Kcynia, ul. Młyńska. Miejsce inwestycji znajduje się przy skrzyżowaniu ulicy Młyńskiej i Libelta.&lt;br/&gt;W nowo powstałym bloku mieszczą się 32 mieszkania, są 4 kondygnacje.&lt;br/&gt;Każdy lokal posiada komórkę lokatorską.&lt;br/&gt;&lt;br/&gt;Na pierwszej kondygnacji mieszkania posiadają ogródki, lokale na wyższych kondygnacjach posiadają loggie. &lt;br/&gt;Ogrzewane są własnym piecem gazowym dwufunkcyjnym dla każdego lokalu.&lt;br/&gt;Budowa została zakończona, budynek został oddany do użytku.&lt;br/&gt;Cennik i wykaz mieszkań dostępny w załącznikach do ogłoszenia.&lt;br/&gt;&lt;br/&gt;WYKAZ WOLNYCH MIESZKAŃ W ZAŁĄCZNIKU GRAFICZNYM DO OGŁOSZENIA.&lt;br/&gt;&lt;br/&gt;Każdy lokal oferowany przez dewelopera jest w wykonany w standardzie:&lt;br/&gt;1.Instalacje elektryczne:&lt;br/&gt;- rozprowadzone przewody podtynkowe zakończone gniazdkami i włącznikami (punkty oświetleniowe i energetyczne)&lt;br/&gt;- domofon,&lt;br/&gt;- dla telefonii i TV (naziemna + światłowód)&lt;br/&gt;- licznik poboru energii.&lt;br/&gt;2. Instalacje sanitarne:&lt;br/&gt;- piony i podejścia kanalizacyjne,&lt;br/&gt;- podejścia wody bez armatury,&lt;br/&gt;- licznik poboru wody,&lt;br/&gt;- podejście gazu, piec dwufunkcyjny, grzejniki.&lt;br/&gt;3. Wykończenie:&lt;br/&gt;- stolarka okienna PCV, rolety zewnętrzne&lt;br/&gt;- drzwi wejściowe do mieszkań,&lt;br/&gt;- parapety zewnętrzne, stalowe,&lt;br/&gt;- parapety wewnętrzne: PCV&lt;br/&gt;- tynki gipsowe.&lt;br/&gt;&lt;br/&gt;Dookoła budynków wykonana infrastruktura, min. miejsca parkingowe.&lt;br/&gt;&lt;br/&gt;Kupujący zwolniony z podatku PCC (2%), oraz z wynagrodzenia biura.&lt;br/&gt;&lt;br/&gt;Na obecnym etapie istnieje możliwość dokonania rezerwacji w naszym biurze.&lt;br/&gt;&lt;br/&gt;Zainteresowanych prosimy o kontakt telefoniczny bądź mailowy:&lt;br/&gt;&lt;br/&gt;Marta Janusz tel. 519 110 078, Danuta Majchrzak tel. 501 769 166&lt;br/&gt;e-mail: dan-dom@wp.pl&lt;br/&gt;&lt;br/&gt;Zachęcamy do kontaktu i zakupu.
+
+</description>
+  </offer>
+</PACKAGE>
