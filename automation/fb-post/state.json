@@ -89,6 +89,12 @@
       "status": "draft_sent",
       "addedAt": "2026-04-17T11:40:05.239Z",
       "sentAt": "2026-04-17T11:40:05.239Z"
+    },
+    {
+      "signature": "general_2026-04-19",
+      "status": "draft_sent",
+      "addedAt": "2026-04-19T11:08:14.900Z",
+      "sentAt": "2026-04-19T11:08:14.900Z"
     }
   ]
 }
